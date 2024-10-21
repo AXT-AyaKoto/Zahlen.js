@@ -8,7 +8,6 @@
     - HTMLの場合 : `<script src="https://cdn.jsdelivr.net/gh/AXT-AyaKoto/Zahlen.js/script.js"></script>`
     - ES Moduleの場合 : `import "https://cdn.jsdelivr.net/gh/AXT-AyaKoto/Zahlen.js/script.js";`
 - `globalThis.Zahlen`から使用します
-    - 詳細は`docs/`を参照してください
 
 ## License
 
