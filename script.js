@@ -684,11 +684,19 @@ const Zahlen_Math = {
     /** ======== その他の関数 ======== **/
     /** @type {(...values: (Zahlen_Qi|Zahlen_Q|Zahlen_Z)[]) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 引数のうち最大の値を返す */
     max: (...values) => {
+        /* ---- Qi範囲 : ltで順番に比較して最大値を返す ---- */
+        if (values.every(v => v instanceof Zahlen_Qi)) {
+            return values.reduce((prev, current) => Zahlen_Math.lt(prev, current) ? current : prev);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** @type {(...values: (Zahlen_Qi|Zahlen_Q|Zahlen_Z)[]) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 引数のうち最小の値を返す */
     min: (...values) => {
+        /* ---- Qi範囲 : gtで順番に比較して最小値を返す ---- */
+        if (values.every(v => v instanceof Zahlen_Qi)) {
+            return values.reduce((prev, current) => Zahlen_Math.gt(prev, current) ? current : prev);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
