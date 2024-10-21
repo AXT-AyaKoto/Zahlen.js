@@ -1,0 +1,75 @@
+# Zahlen.js Spec
+
+- `globalThis.Zahlen`: `{Object}` - Zahlen.jsのメインオブジェクト
+    - `.new`: `{(n: number|bigint|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - Zahlen.jsにおける最も適切な数値表現を生成する
+    - `.Qi`: `{Zahlen_Qi}` - ガウス有理数を表すクラス
+        - `constructor`: `{(Rn: number, Rd: number, In: number, Id: number) => Zahlen_Qi}` - ガウス有理数を生成する
+        - `Rn`: `{bigint}` - 実部の分子(任意の整数)
+        - `Rd`: `{bigint}` - 実部の分母(自然数(0は除く))
+        - `In`: `{bigint}` - 虚部の分子(任意の整数)
+        - `Id`: `{bigint}` - 虚部の分母(自然数(0は除く))
+        - ただし、`Rn/Rd`と`In/Id`はそれぞれ既約分数
+    - `.Q`: `{Zahlen_Q}` - 有理数を表すクラス (`extends Zahlen_Qi`)
+        - `constructor`: `{(n: number, d: number) => Zahlen_Q}` - 有理数を生成する
+    - `.Z`: `{Zahlen_Z}` - 整数を表すクラス (`extends Zahlen_Q`)
+        - `constructor`: `{(n: number) => Zahlen_Z}` - 整数を生成する
+    - `.Math`: `{Zahlen_Math}` - 数学関数を提供するオブジェクト(ECMAScriptの`Math`オブジェクトに概ね準拠)
+        - 定数
+            - `.E`: `{Zahlen_Q}` - ネイピア数の近似値
+            - `.LN2`: `{Zahlen_Q}` - 2の自然対数の近似値
+            - `.LN10`: `{Zahlen_Q}` - 10の自然対数の近似値
+            - `.LOG2E`: `{Zahlen_Q}` - 自然対数の底と2の底の対数の近似値
+            - `.LOG10E`: `{Zahlen_Q}` - 自然対数の底と10の底の対数の近似値
+            - `.PI`: `{Zahlen_Q}` - 円周率の近似値
+            - `.SQRT1_2`: `{Zahlen_Q}` - 1/2の平方根の近似値
+            - `.SQRT2`: `{Zahlen_Q}` - 2の平方根の近似値
+        - 丸め・特徴
+            - `.ceil`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 切り上げを返す
+            - `.floor`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 切り捨てを返す
+            - `.round`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 四捨五入を返す
+            - `.trunc`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 整数部分を返す
+            - `.abs`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 絶対値を返す
+            - `.sign`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 符号を返す
+        - 四則演算
+            - `.add`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 加算を返す
+            - `.sub`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 減算を返す
+            - `.mul`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 乗算を返す
+            - `.div`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 除算を返す
+            - `.mod`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 剰余を返す
+        - 比較演算
+            - `.eq`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x == y
+            - `.ne`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x != y
+            - `.lt`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x < y
+            - `.le`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x <= y
+            - `.gt`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x > y
+            - `.ge`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - x >= y
+        - 三角関数・逆三角関数
+            - `.sin`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 正弦を返す
+            - `.cos`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 余弦を返す
+            - `.tan`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 正接を返す
+            - `.asin`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆正弦を返す
+            - `.acos`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆余弦を返す
+            - `.atan`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆正接を返す
+            - `.atan2`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z, x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 2つの引数の逆正接を返す
+        - 双曲線関数・逆双曲線関数
+            - `.sinh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 双曲線正弦を返す
+            - `.cosh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 双曲線余弦を返す
+            - `.tanh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 双曲線正接を返す
+            - `.asinh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆双曲線正弦を返す
+            - `.acosh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆双曲線余弦を返す
+            - `.atanh`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 逆双曲線正接を返す
+        - 指数関数・対数関数
+            - `.exp`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 指数関数を返す
+            - `.expm1`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - exp(x) - 1を返す
+            - `.log`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 自然対数を返す
+            - `.log1p`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - log(1 + x)を返す
+            - `.log10`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 10を底とする対数を返す
+            - `.log2`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 2を底とする対数を返す
+        - 冪乗・冪根
+            - `.pow`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - xのy乗を返す
+            - `.sqrt`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 平方根を返す
+            - `.cbrt`: `{(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 立方根を返す
+            - `.hypot`: `{(...values: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 引数の平方和の平方根を返す
+        - その他の関数
+            - `.max`: `{(...values: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 引数のうち最大の値を返す
+            - `.min`: `{(...values: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 引数のうち最小の値を返す
