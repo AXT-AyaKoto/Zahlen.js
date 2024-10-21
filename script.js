@@ -4,12 +4,24 @@
 - `globalThis.Zahlen`: `{Object}` - Zahlen.jsのメインオブジェクト
     - `.new`: `{(n: number|bigint|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - Zahlen.jsにおける最も適切な数値表現を生成する
     - `.Qi`: `{Zahlen_Qi}` - ガウス有理数を表すクラス
-        - `constructor`: `{(Rn: number, Rd: number, In: number, Id: number) => Zahlen_Qi}` - ガウス有理数を生成する
-        - `Rn`: `{bigint}` - 実部の分子(任意の整数)
-        - `Rd`: `{bigint}` - 実部の分母(自然数(0は除く))
-        - `In`: `{bigint}` - 虚部の分子(任意の整数)
-        - `Id`: `{bigint}` - 虚部の分母(自然数(0は除く))
-        - ただし、`Rn/Rd`と`In/Id`はそれぞれ既約分数
+        - `.constructor`: `{(Rn: number, Rd: number, In: number, Id: number) => Zahlen_Qi}` - ガウス有理数を生成する
+        - `.Rn`: `{bigint}` - 実部の分子(任意の整数)
+        - `.Rd`: `{bigint}` - 実部の分母(自然数(0は除く))
+        - `.In`: `{bigint}` - 虚部の分子(任意の整数)
+        - `.Id`: `{bigint}` - 虚部の分母(自然数(0は除く))
+            - ただし、`Rn/Rd`と`In/Id`はそれぞれ既約分数
+        - 一般に中置演算子で表されることが多い各種演算はプロトタイプメソッドで呼び出すことができます
+            - `.add`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 加算(`x + y`)
+            - `.sub`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 減算(`x - y`)
+            - `.mul`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 乗算(`x * y`)
+            - `.div`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 除算(`x / y`)
+            - `.mod`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - 剰余(`x % y`)
+            - `.eq`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 等価(`x == y`)
+            - `.ne`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 不等価(`x != y`)
+            - `.lt`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 小なり(`x < y`)
+            - `.le`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 小なりイコール(`x <= y`)
+            - `.gt`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 大なり(`x > y`)
+            - `.ge`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 大なりイコール(`x >= y`)
     - `.Q`: `{Zahlen_Q}` - 有理数を表すクラス (`extends Zahlen_Qi`)
         - `constructor`: `{(n: number, d: number) => Zahlen_Q}` - 有理数を生成する
     - `.Z`: `{Zahlen_Z}` - 整数を表すクラス (`extends Zahlen_Q`)
@@ -190,6 +202,51 @@ const Zahlen_Qi = class Zahlen_Qi {
     /** @type {() => string} - このガウス有理数をstringに変換する */
     toString() {
         return `${this.Rn}/${this.Rd} + ${this.In}/${this.Id}i`;
+    }
+    /* ======== 一般に中置演算子で表されることが多い各種演算 ======== */
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 加算(`x + y`) */
+    add(y) {
+        return Zahlen_Math.add(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 減算(`x - y`) */
+    sub(y) {
+        return Zahlen_Math.sub(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 乗算(`x * y`) */
+    mul(y) {
+        return Zahlen_Math.mul(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 除算(`x / y`) */
+    div(y) {
+        return Zahlen_Math.div(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 剰余(`x % y`) */
+    mod(y) {
+        return Zahlen_Math.mod(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 等価(`x == y`) */
+    eq(y) {
+        return Zahlen_Math.eq(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 不等価(`x != y`) */
+    ne(y) {
+        return Zahlen_Math.ne(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なり(`x < y`) */
+    lt(y) {
+        return Zahlen_Math.lt(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なりイコール(`x <= y`) */
+    le(y) {
+        return Zahlen_Math.le(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なり(`x > y`) */
+    gt(y) {
+        return Zahlen_Math.gt(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なりイコール(`x >= y`) */
+    ge(y) {
+        return Zahlen_Math.ge(this, y);
     }
 };
 
