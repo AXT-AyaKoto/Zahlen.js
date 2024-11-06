@@ -170,7 +170,6 @@ const Zahlen_tools = {
         const x = [new Zahlen_Q(1n, 1n)];
         /** @description - ニュートン法の反復 */
         for (let s = 0; s < 65536; s++) {
-            console.log(`Step ${s}: ${x[s].Rn} / ${x[s].Rd}`);
             /** @type {Zahlen_Q} f(x_s) */
             const f_x_s = Zahlen_Math.sub(Zahlen_Math.pow(x[s], n), m);
             /** @type {Zahlen_Q} f'(x_s) */
