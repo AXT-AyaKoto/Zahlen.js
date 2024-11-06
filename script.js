@@ -135,7 +135,7 @@ const Zahlen_tools = {
      * @param {bigint} [xD=65536n] - 分母の候補の最大値
      * @returns {Zahlen_Q} - aの十分な近似値を表すZahlen_Q
      */
-    "approximation": (a, xD = 65536n) => {
+    "approximation": (a, xD = 32768n) => {
         /** @description - aが0の場合 → 0/1を返す */
         if (a === 0) return new Zahlen_Q(0n, 1n);
         /** @description - aが負数の場合 → 絶対値の近似に-1を掛ける */
@@ -158,7 +158,29 @@ const Zahlen_tools = {
         }
         /** @description - ===で等価と判定されるところまで誤差が縮まらなかったら現時点の最小誤差で返す */
         return Zahlen_new(result);
-    }
+    },
+    /**
+     * ニュートン法を用いて、mのn乗根(の近似値)(の主値)を求める
+     * @param {Zahlen_Q} m - 有理数m
+     * @param {Zahlen_Z} n - 自然数n
+     * @returns {Zahlen_Q} - mのn乗根(の近似値)(の主値)
+     */
+    "nthRoot": (m, n) => {
+        /** @type {Zahlen_Q[]} - x_0, x_1…… */
+        const x = [new Zahlen_Q(1n, 1n)];
+        /** @description - ニュートン法の反復 */
+        for (let s = 0; s < 8; s++) {
+            /** @type {Zahlen_Q} f(x_s) */
+            const f_x_s = Zahlen_Math.sub(Zahlen_Math.pow(x[s], n), m);
+            /** @type {Zahlen_Q} f'(x_s) */
+            const f_prime_x_s = Zahlen_Math.mul(n, Zahlen_Math.pow(x[s], Zahlen_Math.sub(n, Zahlen_new(1n))));
+            /** @type {Zahlen_Q} x_{s+1} */
+            x.push(Zahlen_Math.sub(x[s], Zahlen_Math.div(f_x_s, f_prime_x_s)));
+        }
+        const answer = x.at(-1);
+        if (answer === undefined) throw new Error("[Zahlen.js] Zahlen_Math nthRoot Error");
+        return answer;
+    },
 };
 
 /**
@@ -661,17 +683,27 @@ const Zahlen_Math = {
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** ======== 指数関数・対数関数 ======== **/
-    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 指数関数を返す */
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 指数関数(e^x)を返す */
     exp: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.expを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.exp(Number(x)));
+        /* ---- Qi範囲 : e^(a+bi) = e^a * (cos b + i sin b) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const a = new Zahlen_Q(x.Rn, x.Rd);
+            const b = new Zahlen_Q(x.In, x.Id);
+            const exp_a = Zahlen_Math.exp(a);
+            const cos_b = Zahlen_Math.cos(b);
+            const sin_b = Zahlen_Math.sin(b);
+            const i_sin_b = Zahlen_Math.mul(sin_b, new Zahlen_Qi(0n, 1n, 1n, 1n));
+            return Zahlen_Math.mul(exp_a, Zahlen_Math.add(cos_b, i_sin_b));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - exp(x) - 1を返す */
     expm1: x => {
-        /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.expm1を借りちゃえばOK ---- */
-        if (x instanceof Zahlen_Q) return Zahlen_new(Math.expm1(Number(x)));
+        /* ---- Qi範囲 : Zahlen_Math.exp()を借りて1引けばOK ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.sub(Zahlen_Math.exp(x), Zahlen_new(1));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -682,6 +714,7 @@ const Zahlen_Math = {
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(0≦y≦2π)) */
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - log(1 + x)を返す */
     log1p: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
@@ -706,26 +739,127 @@ const Zahlen_Math = {
     /** ======== 冪乗・冪根 ======== **/
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z, y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - xのy乗を返す */
     pow: (x, y) => {
-        /* ---- Z範囲 : 累乗演算子 ** はBigIntでも使える ---- */
-        if (x instanceof Zahlen_Z && y instanceof Zahlen_Z) return Zahlen_new(x.Rn ** y.Rn);
-        /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.powを借りちゃえばOK ---- */
-        if (x instanceof Zahlen_Q && y instanceof Zahlen_Q) return Zahlen_new(Math.pow(Number(x), Number(y)));
-        /* ---- Qi範囲外ならエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        /* ---- 1. y = 0 なら固定で 1 を返す ---- */
+        if (
+            Zahlen_Math.eq(y, new Zahlen_Z(0n))
+        ) {
+            return Zahlen_new(1);
+        }
+        /* ---- 2. x = 0 なら固定で 0 を返す ---- */
+        if (
+            Zahlen_Math.eq(x, new Zahlen_Z(0n))
+        ) {
+            return Zahlen_new(0);
+        }
+        /* ---- 3. x∈ℤ かつ y∈ℤ⁺ なら BigInt同士の直接演算にまかせてOK ---- */
+        if (
+            x instanceof Zahlen_Z
+            && y instanceof Zahlen_Z
+            && Zahlen_Math.gt(y, new Zahlen_Z(0n))
+        ) {
+            return Zahlen_new(BigInt(x.Rn) ** BigInt(y.Rn));
+        }
+        /* ---- 4. x∈ℤ かつ y∈ℤ⁻ なら 1 / (x ^ |y|) になる ---- */
+        if (
+            x instanceof Zahlen_Z
+            && y instanceof Zahlen_Z
+            && Zahlen_Math.lt(y, new Zahlen_Z(0n))
+        ) {
+            return Zahlen_Math.div(new Zahlen_Z(1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
+        }
+        /* ---- 5. x∈ℚ かつ y∈ℤ なら x.Rn ^ y / x.Rd ^ y になる ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Z) {
+            return Zahlen_new(new Zahlen_Q(BigInt(x.Rn) ** BigInt(y.Rn), BigInt(x.Rd) ** BigInt(y.Rn)));
+        }
+        /* ---- 6. x∈ℚ(i) かつ y∈ℤ⁺ なら しょうがないのでfor文で愚直にy回掛け算する ---- */
+        if (
+            x instanceof Zahlen_Qi
+            && y instanceof Zahlen_Z
+            && Zahlen_Math.gt(y, new Zahlen_Z(0n))
+        ) {
+            let result = Zahlen_new(1);
+            for (let i = 0n; Zahlen_new(i).gt(y); i += 1n) {
+                result = Zahlen_Math.mul(result, x);
+            }
+            return result;
+        }
+        /* ---- 7. x∈ℚ(i) かつ y∈ℤ⁻ なら 1 / (x ^ |y|) になる ---- */
+        if (
+            x instanceof Zahlen_Qi
+            && y instanceof Zahlen_Z
+            && Zahlen_Math.lt(y, new Zahlen_Z(0n))
+        ) {
+            return Zahlen_Math.div(new Zahlen_Qi(1n, 1n, 0n, 1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
+        }
+        /* ---- 8. x∈ℚ⁺ かつ y∈ℚ⁺ なら (x^y.Rn)のy.Rd乗根 になる (有理数の自然数乗根はZahlen_tools.nthRoot()) ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Q
+            && Zahlen_Math.gt(x, Zahlen_new(0n))
+            && Zahlen_Math.gt(y, Zahlen_new(0n))
+        ) {
+            return Zahlen_tools.nthRoot(Zahlen_Math.pow(x, Zahlen_new(y.Rn)), Zahlen_new(y.Rd));
+        }
+        /* ---- 9. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rd = 2 なら (|x|^y.Rn)^(1/2)*i になる(らしい) ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Q
+            && Zahlen_Math.lt(x, Zahlen_new(0n))
+            && Zahlen_Math.gt(y, Zahlen_new(0n))
+            && Zahlen_Math.eq(Zahlen_new(y.Rd), new Zahlen_Z(2n))
+        ) {
+            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), new Zahlen_Qi(0n, 1n, 1n, 1n));
+        }
+        /* ---- 10. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが奇数 なら -( (|x|^n)^(1/d) ) になる(らしい) ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Q
+            && Zahlen_Math.lt(x, Zahlen_new(0n))
+            && Zahlen_Math.gt(y, Zahlen_new(0n))
+            && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(1n))
+        ) {
+            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), Zahlen_new(y.Rd)), Zahlen_new(-1n));
+        }
+        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので暫定エラー ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Q
+            && Zahlen_Math.lt(x, Zahlen_new(0n))
+            && Zahlen_Math.gt(y, Zahlen_new(0n))
+            && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(0n))
+        ) {
+            throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
+        }
+        /* ---- 12. x∈ℚ かつ y∈ℚ⁻ なら 1 / (x ^ |y|) になる  ---- */
+        if (
+            x instanceof Zahlen_Q
+            && y instanceof Zahlen_Q
+            && Zahlen_Math.lt(y, Zahlen_new(0n))
+        ) {
+            return Zahlen_Math.div(Zahlen_new(1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
+        }
+        /* ---- ↑以外はお手上げなので諦めてエラーを返す ---- */
+        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error (Sorry)");
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 平方根を返す */
     sqrt: x => {
-        /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.sqrtを借りちゃえばOK ---- */
-        if (x instanceof Zahlen_Q) return Zahlen_new(Math.sqrt(Number(x)));
-        /* ---- Qi範囲外ならエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        /* ---- 平方根は1/2乗なので、powを借りる ---- */
+        try {
+            return Zahlen_Math.pow(x, new Zahlen_Q(1n, 2n));
+        } catch (error) {
+            throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        }
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 立方根を返す */
     cbrt: x => {
-        /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.cbrtを借りちゃえばOK ---- */
-        if (x instanceof Zahlen_Q) return Zahlen_new(Math.cbrt(Number(x)));
-        /* ---- Qi範囲外ならエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        /* ---- 立方根は1/3乗なので、powを借りる ---- */
+        try {
+            return Zahlen_Math.pow(x, new Zahlen_Q(1n, 3n));
+        } catch (error) {
+            throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        }
     },
     /** @type {(...values: (Zahlen_Qi|Zahlen_Q|Zahlen_Z)[]) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 引数の平方和の平方根を返す */
     hypot: (...values) => {
@@ -768,4 +902,5 @@ globalThis.Zahlen = {
     Q: Zahlen_Q,
     Qi: Zahlen_Qi,
     Z: Zahlen_Z,
+    tools: Zahlen_tools,
 };
