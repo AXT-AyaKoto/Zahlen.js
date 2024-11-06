@@ -169,13 +169,24 @@ const Zahlen_tools = {
         /** @type {Zahlen_Q[]} - x_0, x_1…… */
         const x = [new Zahlen_Q(1n, 1n)];
         /** @description - ニュートン法の反復 */
-        for (let s = 0; s < 8; s++) {
+        for (let s = 0; s < 65536; s++) {
+            console.log(`Step ${s}: ${x[s].Rn} / ${x[s].Rd}`);
             /** @type {Zahlen_Q} f(x_s) */
             const f_x_s = Zahlen_Math.sub(Zahlen_Math.pow(x[s], n), m);
             /** @type {Zahlen_Q} f'(x_s) */
             const f_prime_x_s = Zahlen_Math.mul(n, Zahlen_Math.pow(x[s], Zahlen_Math.sub(n, Zahlen_new(1n))));
             /** @type {Zahlen_Q} x_{s+1} */
-            x.push(Zahlen_Math.sub(x[s], Zahlen_Math.div(f_x_s, f_prime_x_s)));
+            const x_s_plus_1 = Zahlen_Math.sub(x[s], Zahlen_Math.div(f_x_s, f_prime_x_s));
+            /** @type {Zahlen_Q} x_{s+1} の整数部分 */
+            const x_s_plus_1_trunc = Zahlen_Math.trunc(x_s_plus_1);
+            /** @type {Zahlen_Q} x_{s+1} の小数部分 */
+            const x_s_plus_1_frac = Zahlen_Math.sub(x_s_plus_1, x_s_plus_1_trunc);
+            /** @type {Zahlen_Q} x_{s+1} の小数部分をZahlen_new(approximation)で適度に近似した値 */
+            const x_s_plus_1_frac_approx = Zahlen_new(Number(x_s_plus_1_frac));
+            /** @type {Zahlen_Q} x_{s+1} の整数部分と小数部分の和 */
+            x.push(Zahlen_Math.add(x_s_plus_1_trunc, x_s_plus_1_frac_approx));
+            /** @description - 収束判定(前のステップと値が同じならbreak) */
+            if (x[s].eq(x[s + 1])) break;
         }
         const answer = x.at(-1);
         if (answer === undefined) throw new Error("[Zahlen.js] Zahlen_Math nthRoot Error");
