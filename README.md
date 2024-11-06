@@ -17,6 +17,11 @@ copyright (c) 2024- Ayasaka-Koto, All rights reserved.
 私が使用を許可したくない場合はその旨ご連絡いたします。その際は速やかに使用を中止していただきますようお願いいたします。  
 使った際は、私の名前(綾坂こと)をどこかに記載していただけると嬉しいです。
 
+## Special Thanks
+
+- 久留島 (Twitter: @Kurushima_137)
+    - Zahlen.Math.pow()の実装方法の検討でめっちゃ頑張ってくれました、ありがとう……
+
 ## for Contributors
 
 このリポジトリはIssue・Pull Requestを歓迎しています。
