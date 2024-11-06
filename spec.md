@@ -3,7 +3,7 @@
 - `globalThis.Zahlen`: `{Object}` - Zahlen.jsのメインオブジェクト
     - `.new`: `{(n: number|bigint|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z}` - Zahlen.jsにおける最も適切な数値表現を生成する
     - `.Qi`: `{Zahlen_Qi}` - ガウス有理数を表すクラス
-        - `.constructor`: `{(Rn: number, Rd: number, In: number, Id: number) => Zahlen_Qi}` - ガウス有理数を生成する
+        - `.constructor`: `{(Rn: bigint, Rd: bigint, In: bigint, Id: bigint) => Zahlen_Qi}` - ガウス有理数を生成する
         - `.Rn`: `{bigint}` - 実部の分子(任意の整数)
         - `.Rd`: `{bigint}` - 実部の分母(自然数(0は除く))
         - `.In`: `{bigint}` - 虚部の分子(任意の整数)
@@ -22,9 +22,9 @@
             - `.gt`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 大なり(`x > y`)
             - `.ge`: `{(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean}` - 大なりイコール(`x >= y`)
     - `.Q`: `{Zahlen_Q}` - 有理数を表すクラス (`extends Zahlen_Qi`)
-        - `.constructor`: `{(n: number, d: number) => Zahlen_Q}` - 有理数を生成する
+        - `.constructor`: `{(n: bigint, d: bigint) => Zahlen_Q}` - 有理数を生成する
     - `.Z`: `{Zahlen_Z}` - 整数を表すクラス (`extends Zahlen_Q`)
-        - `.constructor`: `{(n: number) => Zahlen_Z}` - 整数を生成する
+        - `.constructor`: `{(n: bigint) => Zahlen_Z}` - 整数を生成する
     - `.Math`: `{Zahlen_Math}` - 数学関数を提供するオブジェクト(ECMAScriptの`Math`オブジェクトに概ね準拠)
         - 定数
             - `.E`: `{Zahlen_Q}` - ネイピア数の近似値
