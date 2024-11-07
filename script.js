@@ -240,44 +240,88 @@ const Zahlen_Qi = class Zahlen_Qi {
     add(y) {
         return Zahlen_Math.add(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 加算(`x + y`) */
+    ["+"](y) {
+        return Zahlen_Math.add(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 減算(`x - y`) */
     sub(y) {
+        return Zahlen_Math.sub(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 減算(`x - y`) */
+    ["-"](y) {
         return Zahlen_Math.sub(this, y);
     }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 乗算(`x * y`) */
     mul(y) {
         return Zahlen_Math.mul(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 乗算(`x * y`) */
+    ["*"](y) {
+        return Zahlen_Math.mul(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 除算(`x / y`) */
     div(y) {
+        return Zahlen_Math.div(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 除算(`x / y`) */
+    ["/"](y) {
         return Zahlen_Math.div(this, y);
     }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 剰余(`x % y`) */
     mod(y) {
         return Zahlen_Math.mod(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 剰余(`x % y`) */
+    ["%"](y) {
+        return Zahlen_Math.mod(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 等価(`x == y`) */
     eq(y) {
+        return Zahlen_Math.eq(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 等価(`x == y`) */
+    ["=="](y) {
         return Zahlen_Math.eq(this, y);
     }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 不等価(`x != y`) */
     ne(y) {
         return Zahlen_Math.ne(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 不等価(`x != y`) */
+    ["!="](y) {
+        return Zahlen_Math.ne(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なり(`x < y`) */
     lt(y) {
+        return Zahlen_Math.lt(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なり(`x < y`) */
+    ["<"](y) {
         return Zahlen_Math.lt(this, y);
     }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なりイコール(`x <= y`) */
     le(y) {
         return Zahlen_Math.le(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 小なりイコール(`x <= y`) */
+    ["<="](y) {
+        return Zahlen_Math.le(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なり(`x > y`) */
     gt(y) {
         return Zahlen_Math.gt(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なり(`x > y`) */
+    [">"](y) {
+        return Zahlen_Math.gt(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なりイコール(`x >= y`) */
     ge(y) {
+        return Zahlen_Math.ge(this, y);
+    }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 大なりイコール(`x >= y`) */
+    [">="](y) {
         return Zahlen_Math.ge(this, y);
     }
 };
