@@ -82,12 +82,111 @@
 
 */
 
-/** @type {(n: bigint|number|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - Zahlen.jsにおける最も適切な数値表現を生成する */
+/** @type {(n: bigint|number|string|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - Zahlen.jsにおける最も適切な数値表現を生成する */
 const Zahlen_new = n => {
     /** bigintの場合 : そのままZahlen_Zに変換するだけ */
     if (typeof n === 'bigint') return new Zahlen_Z(n);
     /** numberの場合 : 十分な近似値を表すZahlen_Qに変換する */
     if (typeof n === 'number') return Zahlen_tools.approximation(n);
+    /** stringの場合 : 該当するZahlen_Qiを頑張って生成してZahlen_newに整形してもらう */
+    if (typeof n === 'string') {
+        /**
+         * @description - Zahlen.jsの正規表現オブジェクト
+         * @type {Object<string, RegExp>}
+         */
+        const regexps = {};
+        {
+            // Define basic components
+            regexps.zero = /0/;
+            regexps.digit_bin_nonzero = /1/;
+            regexps.digit_bin = /[01]/;
+            regexps.digit_oct_nonzero = /[1-7]/;
+            regexps.digit_oct = /[0-7]/;
+            regexps.digit_dec_nonzero = /[1-9]/;
+            regexps.digit_dec = /[0-9]/;
+            regexps.digit_hex_lower = /[a-f]/;
+            regexps.digit_hex_upper = /[A-F]/;
+            regexps.digit_hex_nonzero = /[1-9a-fA-F]/;
+            regexps.digit_hex = /[0-9a-fA-F]/;
+
+            // Define natural numbers
+            regexps.natural_number_bin = new RegExp(`((${regexps.digit_bin_nonzero.source})(${regexps.digit_bin.source})*)|(${regexps.zero.source})`);
+            regexps.natural_number_oct = new RegExp(`((${regexps.digit_oct_nonzero.source})(${regexps.digit_oct.source})*)|(${regexps.zero.source})`);
+            regexps.natural_number_dec = new RegExp(`((${regexps.digit_dec_nonzero.source})(${regexps.digit_dec.source})*)|(${regexps.zero.source})`);
+            regexps.natural_number_hex = new RegExp(`((${regexps.digit_hex_nonzero.source})(${regexps.digit_hex.source})*)|(${regexps.zero.source})`);
+
+            // Define integers
+            regexps.integer_bin = new RegExp(`[\+\-]?0b(${regexps.natural_number_bin.source})`);
+            regexps.integer_oct = new RegExp(`[\+\-]?0o(${regexps.natural_number_oct.source})`);
+            regexps.integer_dec = new RegExp(`[\+\-]?(${regexps.natural_number_dec.source})`);
+            regexps.integer_hex = new RegExp(`[\+\-]?0x(${regexps.natural_number_hex.source})`);
+            regexps.integer = new RegExp(`(${regexps.integer_bin.source})|(${regexps.integer_oct.source})|(${regexps.integer_dec.source})|(${regexps.integer_hex.source})`);
+
+            // Define decimals
+            regexps.decimal_bin = new RegExp(`(${regexps.integer_bin.source})\\.(${regexps.digit_bin.source})+`);
+            regexps.decimal_oct = new RegExp(`(${regexps.integer_oct.source})\\.(${regexps.digit_oct.source})+`);
+            regexps.decimal_dec = new RegExp(`(${regexps.integer_dec.source})?\\.(${regexps.digit_dec.source})+`);
+            regexps.e_notation_dec = new RegExp(`((${regexps.decimal_dec.source})|(${regexps.integer_dec.source}))[eE][\+\-]?(${regexps.natural_number_dec.source})`);
+            regexps.decimal_hex = new RegExp(`(${regexps.integer_hex.source})\\.(${regexps.digit_hex.source})+`);
+            regexps.decimal = new RegExp(`(${regexps.decimal_bin.source})|(${regexps.decimal_oct.source})|(${regexps.decimal_dec.source})|(${regexps.decimal_hex.source})`);
+
+            // Define numbers
+            regexps.number_bin = new RegExp(`(${regexps.integer_bin.source})|(${regexps.decimal_bin.source})`);
+            regexps.number_oct = new RegExp(`(${regexps.integer_oct.source})|(${regexps.decimal_oct.source})`);
+            regexps.number_dec = new RegExp(`(${regexps.integer_dec.source})|(${regexps.decimal_dec.source})|(${regexps.e_notation_dec.source})`);
+            regexps.number_hex = new RegExp(`(${regexps.integer_hex.source})|(${regexps.decimal_hex.source})`);
+            regexps.number = new RegExp(`(${regexps.number_bin.source})|(${regexps.number_oct.source})|(${regexps.number_dec.source})|(${regexps.number_hex.source})`);
+
+            // Define fractions
+            regexps.zahlen_q_fraction = new RegExp(`(${regexps.number.source})\\/(${regexps.number.source})`);
+            regexps.zahlen_q_e_notation = regexps.e_notation_dec;
+
+
+            // Define zahlen strings
+            regexps.zahlen_z_str = regexps.integer;
+            regexps.zahlen_q_decimal = regexps.decimal;
+            regexps.zahlen_q_str = new RegExp(`((${regexps.zahlen_z_str.source})|(${regexps.zahlen_q_decimal.source})|(${regexps.zahlen_q_fraction.source})|(${regexps.zahlen_q_e_notation.source}))`);
+            regexps.zahlen_qi_str = new RegExp(`(${regexps.zahlen_q_str.source})[\+\-]?(${regexps.zahlen_q_str.source})i`);
+            regexps.zahlen_str = new RegExp(`((${regexps.zahlen_z_str.source})|(${regexps.zahlen_q_str.source})|(${regexps.zahlen_qi_str.source}))`);
+        }
+        // zahlen_z_str に完全一致 → BigInt()に渡せるのでそれをZahlen_newに渡す
+        if (new RegExp(`^(${regexps.zahlen_z_str.source})$`).test(n)) {
+            console.log("zahlen_z_str matched", n);
+            return Zahlen_new(BigInt(n));
+        }
+        // zahlen_q_decimal にマッチ → 小数点以下桁数から分母を決定、小数点消したものを分子にしてZahlen_Qに渡す
+        if (new RegExp(`^(${regexps.zahlen_q_decimal.source})$`).test(n)) {
+            console.log("zahlen_q_decimal matched", n);
+            const [integer, decimal] = n.split('.');
+            const denominator = 10n ** BigInt(decimal.length);
+            const numerator = BigInt(integer + decimal);
+            return Zahlen_new(new Zahlen_Q(numerator, denominator));
+        }
+        // zahlen_q_fraction にマッチ → 分子と分母を取得、それぞれをZahlen_newに渡したものを割り算してZahlen_Qに渡す
+        if (new RegExp(`^(${regexps.zahlen_q_fraction.source})$`).test(n)) {
+            console.log("zahlen_q_fraction matched", n);
+            const [numerator, denominator] = n.split('/');
+            return Zahlen_new(Zahlen_Math.div(Zahlen_new(numerator), Zahlen_new(denominator)));
+        }
+        // zahlen_q_e_notation にマッチ → 仮数部と指数部を取得して計算する
+        if (new RegExp(`^(${regexps.zahlen_q_e_notation.source})$`).test(n)) {
+            console.log("zahlen_q_e_notation matched", n);
+            const [mantissa, exponent] = n.split(/[eE]/);
+            return Zahlen_new(Zahlen_Math.mul(Zahlen_new(mantissa), Zahlen_Math.pow(Zahlen_new(10n), Zahlen_new(exponent))));
+        }
+        // zahlen_qi_str にマッチ → 実部と虚部を取得→それぞれをZahlen_Qに変換→虚部にi掛けて足したものをそのまま帰す
+        if (regexps.zahlen_qi_str.test(n)) {
+            const real_match = n.match(regexps.zahlen_q_str);
+            if (real_match === null) throw new Error("[Zahlen.js] Zahlen.new Invalid Qi Error");
+            const real_str = real_match[0];
+            const imag_str = n.slice(real_str.length, -1);
+            const real = Zahlen_new(real_str);
+            const imag = Zahlen_new(imag_str);
+            return Zahlen_Math.add(real, Zahlen_Math.mul(imag, new Zahlen_Qi(0n, 1n, 0n, 1n)));
+        }
+        // どれにもマッチしなかったらエラー
+        throw new Error("[Zahlen.js] Zahlen.new Invalid String Error");
+    }
     /** Zahlen_Qiの場合 : 虚部が0ならZahlen_Qに変換、さらに実部の分母が1ならZahlen_Zに変換、それ以外ならQiで返す */
     if (n instanceof Zahlen_Qi) {
         if (n.In === 0n) {
