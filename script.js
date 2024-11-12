@@ -82,12 +82,17 @@
 
 */
 
-/** @type {(n: bigint|number|Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - Zahlen.jsにおける最も適切な数値表現を生成する */
-const Zahlen_new = n => {
+/**
+ * Zahlen.jsにおける最も適切な数値表現を生成する
+ * @param {bigint|number|Zahlen_Qi|Zahlen_Q|Zahlen_Z} n - 生成する数値
+ * @param {bigint} [maxDenominator=65536n] - 分母の候補の最大値(numberのときのみ使用)
+ * @returns {Zahlen_Qi|Zahlen_Q|Zahlen_Z}
+ */
+const Zahlen_new = (n, maxDenominator = 65536n) => {
     /** bigintの場合 : そのままZahlen_Zに変換するだけ */
     if (typeof n === 'bigint') return new Zahlen_Z(n);
     /** numberの場合 : 十分な近似値を表すZahlen_Qに変換する */
-    if (typeof n === 'number') return Zahlen_tools.approximation(n);
+    if (typeof n === 'number') return Zahlen_tools.approximation(n, maxDenominator);
     /** Zahlen_Qiの場合 : 虚部が0ならZahlen_Qに変換、さらに実部の分母が1ならZahlen_Zに変換、それ以外ならQiで返す */
     if (n instanceof Zahlen_Qi) {
         if (n.In === 0n) {
@@ -135,7 +140,7 @@ const Zahlen_tools = {
      * @param {bigint} [xD=65536n] - 分母の候補の最大値
      * @returns {Zahlen_Q} - aの十分な近似値を表すZahlen_Q
      */
-    "approximation": (a, xD = 32768n) => {
+    "approximation": (a, xD = 65536n) => {
         /** @description - aが0の場合 → 0/1を返す */
         if (a === 0) return new Zahlen_Q(0n, 1n);
         /** @description - aが負数の場合 → 絶対値の近似に-1を掛ける */
