@@ -85,14 +85,13 @@
 /**
  * Zahlen.jsにおける最も適切な数値表現を生成する
  * @param {bigint|number|Zahlen_Qi|Zahlen_Q|Zahlen_Z} n - 生成する数値
- * @param {bigint} [maxDenominator=65536n] - 分母の候補の最大値(numberのときのみ使用)
  * @returns {Zahlen_Qi|Zahlen_Q|Zahlen_Z}
  */
-const Zahlen_new = (n, maxDenominator = 65536n) => {
+const Zahlen_new = (n) => {
     /** bigintの場合 : そのままZahlen_Zに変換するだけ */
     if (typeof n === 'bigint') return new Zahlen_Z(n);
     /** numberの場合 : 十分な近似値を表すZahlen_Qに変換する */
-    if (typeof n === 'number') return Zahlen_tools.approximation(n, maxDenominator);
+    if (typeof n === 'number') return Zahlen_tools.approximation(n);
     /** Zahlen_Qiの場合 : 虚部が0ならZahlen_Qに変換、さらに実部の分母が1ならZahlen_Zに変換、それ以外ならQiで返す */
     if (n instanceof Zahlen_Qi) {
         if (n.In === 0n) {
@@ -135,34 +134,71 @@ const Zahlen_tools = {
         return a < 0n ? -1n : a > 0n ? 1n : 0n;
     },
     /**
-     * aの十分な近似値を表す、分母がなるべく小さいZahlen_Q(有理数)を生成する
+     * aの十分な近似値を表すZahlen_Q(有理数)を生成する
      * @param {number} a - 実数a
-     * @param {bigint} [xD=65536n] - 分母の候補の最大値
      * @returns {Zahlen_Q} - aの十分な近似値を表すZahlen_Q
      */
-    "approximation": (a, xD = 65536n) => {
-        /** @description - aが0の場合 → 0/1を返す */
+    "approximation": (a) => {
+        /** @description - aが特殊な値の場合 */
+        // a === 0 → 0/1
         if (a === 0) return new Zahlen_Q(0n, 1n);
-        /** @description - aが負数の場合 → 絶対値の近似に-1を掛ける */
-        if (a < 0) return Zahlen_Math.mul(this.approximation(-a, xD), new Zahlen_Z(-1n));
-        /** @description - aが正数の場合(↑に当てはまらない場合) → 分母の候補を1から順番に試す */
-        /** @type {bigint} - 分母の最大値 */
-        const maxDenominator = xD;
-        /** @type {Zahlen_Q} - 現時点で返す値の候補 */
-        let result = new Zahlen_Q(0n, 1n);
-        /** @type {number} - resultとaの誤差 */
-        let error = Math.abs(a - Number(result));
-        /** @description - 分母を1から順番に試す */
-        for (let d = 1n; d < maxDenominator; d++) {
-            /** @type {number} - a/dを四捨五入した値を求める */
-            const n = Math.round(a * Number(d));
-            /** @description - n/dがaに十分近い(===で等価と判定される)場合 → n/dを返す */
-            if (n / Number(d) === a) return new Zahlen_Q(BigInt(n), d);
-            /** @description - n/dとaの誤差が現時点での最小誤差より小さい場合 → resultとerrorを更新する */
-            if (Math.abs(a - n / Number(d)) < error) [result, error] = [new Zahlen_Q(BigInt(n), d), Math.abs(a - n / Number(d))];
-        }
-        /** @description - ===で等価と判定されるところまで誤差が縮まらなかったら現時点の最小誤差で返す */
-        return Zahlen_new(result);
+        // a === NaN → 0/0
+        if (Number.isNaN(a)) return new Zahlen_Q(0n, 0n);
+        // a === +Infinity → 1/0
+        if (a === Infinity) return new Zahlen_Q(1n, 0n);
+        // a === -Infinity → -1/0
+        if (a === -Infinity) return new Zahlen_Q(-1n, 0n);
+        /** @description - aが通常の値の場合 */
+        /** @type {(num: number) => string} - numberを「そのnumberがIEE 754倍精度浮動小数点数ではどのようなビット列で表現されるか」を表すstringに変換 */
+        const numberToBinaryStr = (num) => {
+            const buffer = new ArrayBuffer(64);
+            const view = new DataView(buffer);
+            view.setFloat64(0, num);
+            let str = "";
+            for (let i = 0; i < 8; i++) {
+                str += view.getUint8(i).toString(2).padStart(8, "0");
+            }
+            return str;
+        };
+        /** @type {(binary: string) => {n: bigint, d: bigint}} - binaryは0か1で構成された64文字の文字列。binaryで表されるビット列をIEEE754倍精度浮動小数点数として読んだときのnumberに等しい有理数n/dのnとdを返す */
+        const binaryStrToRationalNumber = (binary) => {
+            const signStr = binary[0];
+            const expoStr = binary.substring(1, 12);
+            const mantStr = binary.substring(12, 64);
+
+            const mant_n = BigInt(`0b1${mantStr}`);
+            const mant_d = 2n ** 52n;
+
+            const expo_unoffset = BigInt(`0b${expoStr}`) - 1023n;
+            let expo_n, expo_d;
+            if (expo_unoffset >= 0n) {
+                expo_n = 2n ** expo_unoffset;
+                expo_d = 1n;
+            } else {
+                expo_n = 1n;
+                expo_d = 2n ** (expo_unoffset * -1n);
+            }
+
+            const modulus_n = expo_n * mant_n;
+            const modulus_d = expo_d * mant_d;
+
+            /** @type {(a: bigint, b: bigint) => bigint} - 最大公約数を求める(a≧b) */
+            const gcd = (a, b) => b === 0n ? a : a < b ? gcd(b, a) : gcd(b, a % b);
+
+            const irreducible_modulus_n = modulus_n / gcd(modulus_n, modulus_d);
+            const irreducible_modulus_d = modulus_d / gcd(modulus_n, modulus_d);
+
+            if (signStr == "0") {
+                return { "n": irreducible_modulus_n, "d": irreducible_modulus_d };
+            } else {
+                return { "n": -1n * irreducible_modulus_n, "d": irreducible_modulus_d };
+            }
+        };
+        /** @type {string} - aのIEEE754倍精度浮動小数点数表現を表すビット列 */
+        const binaryStr = numberToBinaryStr(a);
+        /** @type {{n: bigint, d: bigint}} - aに等しい有理数n/dのnとdを持つオブジェクト */
+        const rational = binaryStrToRationalNumber(binaryStr);
+        return new Zahlen_Q(rational.n, rational.d);
     },
     /**
      * ニュートン法を用いて、mのn乗根(の近似値)(の主値)を求める
