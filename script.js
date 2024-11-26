@@ -276,6 +276,19 @@ const Zahlen_Qi = class Zahlen_Qi {
     toString() {
         return `${this.Rn}/${this.Rd} + ${this.In}/${this.Id}i`;
     }
+    /* ======== Pythonのcomplex型をベースにしたメソッド/プロパティ ======== */
+    /** @type {Zahlen_Q} - 実部 */
+    get real() {
+        return new Zahlen_Q(this.Rn, this.Rd);
+    }
+    /** @type {Zahlen_Q} - 虚部 */
+    get imag() {
+        return new Zahlen_Q(this.In, this.Id);
+    }
+    /** @type {() => Zahlen_Q} - 共役な複素数 */
+    conjugate() {
+        return Zahlen_new(new Zahlen_Qi(this.Rn, this.Rd, -this.In, this.Id));
+    }
     /* ======== 一般に中置演算子で表されることが多い各種演算 ======== */
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 加算(`x + y`) */
     add(y) {
@@ -923,7 +936,7 @@ const Zahlen_Math = {
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
-    /** ======== その他の関数 ======== **/
+    /** ======== 最大・最小 ======== **/
     /** @type {(...values: (Zahlen_Qi|Zahlen_Q|Zahlen_Z)[]) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 引数のうち最大の値を返す */
     max: (...values) => {
         /* ---- Qi範囲 : ltで順番に比較して最大値を返す ---- */
@@ -941,6 +954,30 @@ const Zahlen_Math = {
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+    },
+    /* ======== 複素数関連(Pythonのcomplex型をベースに) ======== */
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 弧度法(ラジアン) → 角度法(度)の変換 */
+    degrees: (x) => {
+        return Zahlen_Math.mul(x, Zahlen_Math.div(new Zahlen_Z(180n), Zahlen_Math.PI));
+    },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 角度法(度) → 弧度法(ラジアン)の変換 */
+    radians: (x) => {
+        return Zahlen_Math.mul(x, Zahlen_Math.div(Zahlen_Math.PI, new Zahlen_Z(180n)));
+    },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 偏角(位相)を返す。`Zahlen.Math.atan2(x.imag, x.real)`と等価 */
+    phase: (x) => {
+        return Zahlen_Math.atan2(x.imag, x.real);
+    },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => [(Zahlen_Qi|Zahlen_Q|Zahlen_Z), (Zahlen_Qi|Zahlen_Q|Zahlen_Z)]} -  極形式表現を`[絶対値, 偏角]`で返す。`[Zahlen.Math.abs(x), Zahlen.Math.phase(x)]`と等価 */
+    polar: (x) => {
+        return [Zahlen_Math.abs(x), Zahlen_Math.phase(x)];
+    },
+    /** @type {(abs: Zahlen_Qi|Zahlen_Q|Zahlen_Z, amp: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} -  絶対値と偏角からなる複素数の極形式表現を複素数平面形式に変換してZahlen.Qiで返す。`abs * math.cos(amp) + abs * math.sin(amp) * i`と等価 */
+    orthogonal: (abs, amp) => {
+        return Zahlen_Math.add(
+            Zahlen_Math.mul(abs, Zahlen_Math.cos(amp)),
+            Zahlen_Math.mul(abs, Zahlen_Math.mul(new Zahlen_Qi(0n, 1n, 1n, 1n), Zahlen_Math.sin(amp)))
+        );
     },
 };
 
