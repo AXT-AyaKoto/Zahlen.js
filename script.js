@@ -437,10 +437,10 @@ const Zahlen_Math = {
     round: x => {
         /* ---- Z範囲 : なにもしない ---- */
         if (x instanceof Zahlen_Z) return x;
-        /* ---- Q範囲 : 正ならfloorに+1/2、負ならceilに-1/2 ---- */
+        /* ---- Q範囲 : 正なら+1/2のfloor、負なら-1/2のceilに ---- */
         if (x instanceof Zahlen_Q) {
-            if (x.Rn >= 0n) return Zahlen_Math.add(Zahlen_Math.floor(x), new Zahlen_Q(1n, 2n));
-            else return Zahlen_Math.sub(Zahlen_Math.ceil(x), new Zahlen_Q(1n, 2n));
+            if (x.Rn >= 0n) return Zahlen_Math.floor(Zahlen_Math.add(x, new Zahlen_Q(1n, 2n)));
+            else return Zahlen_Math.ceil(Zahlen_Math.sub(x, new Zahlen_Q(1n, 2n)));
         }
         /* ---- Qi範囲 : 実部と虚部それぞれでroundを取って設定し直す ---- */
         if (x instanceof Zahlen_Qi) {
