@@ -236,10 +236,10 @@ const Zahlen_tools = {
 
 /**
  * @class Zahlen_Qi - ガウス有理数(ℚ[i])
- * @property {bigint} Rn - 実部の分子(ℤ, 絶対値はRdと互いに素)
- * @property {bigint} Rd - 実部の分母(ℕ(∌0), 絶対値はRnと互いに素)
- * @property {bigint} In - 虚部の分子(ℤ, 絶対値はIdと互いに素)
- * @property {bigint} Id - 虚部の分母(ℕ(∌0), 絶対値はInと互いに素)
+ * @property {bigint} Rn - 実部の分子(ℤ, 絶対値はRdと互いに素でなくてもOK)
+ * @property {bigint} Rd - 実部の分母(ℕ(∌0), 絶対値はRnと互いに素でなくてもOK)
+ * @property {bigint} In - 虚部の分子(ℤ, 絶対値はIdと互いに素でなくてもOK)
+ * @property {bigint} Id - 虚部の分母(ℕ(∌0), 絶対値はInと互いに素でなくてもOK)
  */
 const Zahlen_Qi = class Zahlen_Qi {
     /**
@@ -990,5 +990,4 @@ globalThis.Zahlen = {
     Q: Zahlen_Q,
     Qi: Zahlen_Qi,
     Z: Zahlen_Z,
-    tools: Zahlen_tools,
 };
