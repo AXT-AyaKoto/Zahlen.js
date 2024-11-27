@@ -775,7 +775,6 @@ const Zahlen_Math = {
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
-    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(0≦y≦2π)) */
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - log(1 + x)を返す */
     log1p: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
@@ -961,9 +960,12 @@ const Zahlen_Math = {
     radians: (x) => {
         return Zahlen_Math.mul(x, Zahlen_Math.div(Zahlen_Math.PI, new Zahlen_Z(180n)));
     },
-    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 偏角(位相)を返す。`Zahlen.Math.atan2(x.imag, x.real)`と等価 */
-    phase: (x) => {
-        return Zahlen_Math.atan2(x.imag, x.real);
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(-π<y≦π)) */
+    arg: x => {
+        /* ---- Qi範囲 : atan2をそのまま借りる ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.atan2(x.imag, x.real);
+        /* ---- Qi範囲外ならエラーを返す ---- */
+        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => [(Zahlen_Qi|Zahlen_Q|Zahlen_Z), (Zahlen_Qi|Zahlen_Q|Zahlen_Z)]} -  極形式表現を`[絶対値, 偏角]`で返す。`[Zahlen.Math.abs(x), Zahlen.Math.phase(x)]`と等価 */
     polar: (x) => {

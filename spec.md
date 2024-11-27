@@ -793,6 +793,7 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
+> - 返り値$\phi$の範囲は$\pi\lt\phi\le\pi$です。
 > - `x`, `y`のいずれかが`Zahlen_Qi`の場合は`TypeError`となります。
 >     - メッセージ : `[Zahlen.js] Zahlen_Math.atan2() can only accept Zahlen_Q( or Zahlen_Z) as arguments`
 
@@ -1128,7 +1129,7 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 > **Notes:**
 > - `Zahlen_Math.mul(x, Zahlen_Math.div(Zahlen_Math.PI, new Zahlen_Z(180n)))`と等価です。
 
-#### *(static)* `Zahlen_Math.phase(x)`
+#### *(static)* `Zahlen_Math.arg(x)`
 
 ```js
 /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
@@ -1142,6 +1143,7 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角(ラジアン)
 
 > **Notes:**
+> - 返り値$\phi$の範囲は$\pi\lt\phi\le\pi$です。
 > - `Zahlen_Math.atan2(x.imag, x.real)`と等価です。
 
 #### *(static)* `Zahlen_Math.polar(x)`
