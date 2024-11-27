@@ -409,6 +409,8 @@ const Zahlen_Math = {
     SQRT1_2: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.SQRT1_2) : new Zahlen_Q(33461n, 47321n))(),
     /** @type {Zahlen_Q} - 2の平方根の近似値 */
     SQRT2: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.SQRT2) : new Zahlen_Q(66922n, 47321n))(),
+    /** @type {Zahlen_Qi} - 虚数単位i */
+    I: new Zahlen_Qi(0n, 1n, 1n, 1n),
     /** ======== 丸め・特徴 ======== **/
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 切り上げを返す */
     ceil: x => {
