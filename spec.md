@@ -390,6 +390,14 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 1/2の平方根の近似値です。
 
+#### `Zahlen_Math.I`
+
+```js
+/** @type {Zahlen_Qi} */
+```
+
+虚数単位iです。
+
 ### Methods > Rounding
 
 #### *(static)* `Zahlen_Math.ceil(x)`
