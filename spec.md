@@ -779,21 +779,22 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 #### *(static)* `Zahlen_Math.atan2(y, x)`
 
 ```js
-/** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z, x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
+/** @type {(y: Zahlen_Q|Zahlen_Z, x: Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
 ```
 
 [atan2](https://ja.wikipedia.org/wiki/Atan2)を返します。
 返り値は(0,0)と(x,y)を結ぶ半直線と正のx軸のが成す角の角度を表します。
 
 - Parameters:
-    - `y`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
-    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
+    - `y`: `Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
+    - `x`: `Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接
+    - `Zahlen_Q|Zahlen_Z` - 逆正接
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`, `y`のいずれかが`Zahlen_Qi`の場合については未実装です。
+> - `x`, `y`のいずれかが`Zahlen_Qi`の場合は`TypeError`となります。
+>     - メッセージ : `[Zahlen.js] Zahlen_Math.atan2() can only accept Zahlen_Q( or Zahlen_Z) as arguments`
 
 ### Methods > Hyperbolic
 

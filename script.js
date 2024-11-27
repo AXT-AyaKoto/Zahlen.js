@@ -695,12 +695,12 @@ const Zahlen_Math = {
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
-    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z, x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 2つの引数の逆正接を返す */
+    /** @type {(y: Zahlen_Q|Zahlen_Z, x: Zahlen_Q|Zahlen_Z) => Zahlen_Q|Zahlen_Z} - 2つの引数の逆正接を返す */
     atan2: (y, x) => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.atan2を借りちゃえばOK ---- */
         if (y instanceof Zahlen_Q && x instanceof Zahlen_Q) return Zahlen_new(Math.atan2(Number(y), Number(x)));
-        /* ---- Qi範囲外ならエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        /* ---- Q範囲外ならエラーを返す ---- */
+        throw new TypeError("[Zahlen.js] Zahlen_Math.atan2() can only accept Zahlen_Q( or Zahlen_Z) as arguments");
     },
     /** ======== 双曲線関数・逆双曲線関数 ======== **/
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 双曲線正弦を返す */
