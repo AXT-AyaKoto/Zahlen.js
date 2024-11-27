@@ -1011,7 +1011,7 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `x`の`y`乗
 
 > **Notes:**
-> - `x`が`Zahlen_Qi`の場合は主値を返します。
+> - `x`, `y`のいずれかが`Zahlen_Qi`の場合は主値を返します。
 >     - $\textrm{pv } z^a = e^{a \textrm{Log} z}$
 
 #### *(static)* `Zahlen_Math.sqrt(x)`
