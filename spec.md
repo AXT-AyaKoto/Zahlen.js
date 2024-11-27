@@ -943,8 +943,8 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 自然対数
 
 > **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
->     - $\textrm{Log}\,{x}$(※虚部bが$-\pi\lt{b}\le\pi$を満たす、複素対数函数の主値)を返すようにする予定です。
+> - `x`が`Zahlen_Qi`の場合には主値を返します。
+>     - $\textrm{Log} z = \log_e|z| + i (\textrm{Arg} z)$(ただし$\textrm{Arg} z$は$-\pi\lt\arg{z}\le\pi$に限定した$\arg$)
 
 #### *(static)* `Zahlen_Math.log1p(x)`
 
@@ -958,6 +958,9 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 計算する数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `log(1 + x)`の結果
+
+> **Notes:**
+> - `x`が`Zahlen_Qi`の場合、`Zahlen_Math.add(Zahlen_Math.log(z), Zahlen_new(1))`と等価です。
 
 #### *(static)* `Zahlen_Math.log10(x)`
 
