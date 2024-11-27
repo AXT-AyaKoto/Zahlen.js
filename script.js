@@ -657,6 +657,13 @@ const Zahlen_Math = {
     sin: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.sinを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.sin(Number(x)));
+        /* ---- Qi範囲 : sin z = (e^iz - e^(-iz)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_iz = Zahlen_Math.exp(Zahlen_Math.mul(x, Zahlen_Math.I));
+            const exp_minus_iz = Zahlen_Math.exp(Zahlen_Math.mul(Zahlen_Math.neg(x), Zahlen_Math.I));
+            const exp_diff = Zahlen_Math.sub(exp_iz, exp_minus_iz);
+            return Zahlen_Math.div(exp_diff, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -664,6 +671,13 @@ const Zahlen_Math = {
     cos: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.cosを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.cos(Number(x)));
+        /* ---- Qi範囲 : cos z = (e^iz + e^(-iz)) / 2 ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_iz = Zahlen_Math.exp(Zahlen_Math.mul(x, Zahlen_Math.I));
+            const exp_minus_iz = Zahlen_Math.exp(Zahlen_Math.mul(Zahlen_Math.neg(x), Zahlen_Math.I));
+            const exp_sum = Zahlen_Math.add(exp_iz, exp_minus_iz);
+            return Zahlen_Math.div(exp_sum, Zahlen_new(2n));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -671,6 +685,8 @@ const Zahlen_Math = {
     tan: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.tanを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.tan(Number(x)));
+        /* ---- Qi範囲 : tan z = sin z / cos z ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.div(Zahlen_Math.sin(x), Zahlen_Math.cos(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
