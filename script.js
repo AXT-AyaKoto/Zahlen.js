@@ -772,6 +772,12 @@ const Zahlen_Math = {
     log: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.logを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log(Number(x)));
+        /* ---- Qi範囲 : Log z = log |z| + i (Arg z) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const abs_z = Zahlen_Math.abs(x);
+            const arg_z = Zahlen_Math.arg(x);
+            return Zahlen_Math.add(Zahlen_Math.log(abs_z), Zahlen_Math.mul(arg_z, Zahlen_Math.I));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -779,6 +785,8 @@ const Zahlen_Math = {
     log1p: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log1p(Number(x)));
+        /* ---- Qi範囲 : Zahlen_Math.log()を借りて1足せばOK ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.log(Zahlen_Math.add(x, Zahlen_new(1)));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
