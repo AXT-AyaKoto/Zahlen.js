@@ -707,6 +707,13 @@ const Zahlen_Math = {
     sinh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.sinhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.sinh(Number(x)));
+        /* ---- Qi範囲 : sinh z = (e^z - e^(-z)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_z = Zahlen_Math.exp(x);
+            const exp_minus_z = Zahlen_Math.exp(Zahlen_Math.neg(x));
+            const exp_diff = Zahlen_Math.sub(exp_z, exp_minus_z);
+            return Zahlen_Math.div(exp_diff, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -714,6 +721,13 @@ const Zahlen_Math = {
     cosh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.coshを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.cosh(Number(x)));
+        /* ---- Qi範囲 : cosh z = (e^z + e^(-z)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_z = Zahlen_Math.exp(x);
+            const exp_minus_z = Zahlen_Math.exp(Zahlen_Math.neg(x));
+            const exp_sum = Zahlen_Math.add(exp_z, exp_minus_z);
+            return Zahlen_Math.div(exp_sum, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -721,6 +735,12 @@ const Zahlen_Math = {
     tanh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.tanhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.tanh(Number(x)));
+        /* ---- Qi範囲 : tanh = sinh z / cosh z ---- */
+        if (x instanceof Zahlen_Qi) {
+            const sinh_z = Zahlen_Math.sinh(x);
+            const cosh_z = Zahlen_Math.cosh(x);
+            return Zahlen_Math.div(sinh_z, cosh_z);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },

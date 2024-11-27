@@ -812,9 +812,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線正弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.cosh(x)`
 
 ```js
@@ -828,9 +825,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線余弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.tanh(x)`
 
 ```js
@@ -843,9 +837,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線正接を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線正接
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.asinh(x)`
 
