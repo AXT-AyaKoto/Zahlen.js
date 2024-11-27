@@ -387,30 +387,27 @@ const Zahlen_Z = class Zahlen_Z extends Zahlen_Q {
     }
 };
 
-/** @type {string} - Zahlen_Mathの定数モード("calc"はその場で計算、"hardcoding"は分母>=2^16の直書きの値) */
-const Zahlen_Math_CONST_MODE = "calc";
-
 /** @description - Zahlen.js専用の数学関数etcを実装したオブジェクト群 */
 const Zahlen_Math = {
     /** ======== 定数 ======== **/
     /** @type {Zahlen_Q} - ネイピア数の近似値 */
-    E: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.E) : new Zahlen_Q(49171n, 18089n))(),
+    E: Zahlen_new(Math.E),
     /** @type {Zahlen_Q} - 2の自然対数の近似値 */
-    LN2: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.LN2) : new Zahlen_Q(25469n, 36744n))(),
+    LN2: Zahlen_new(Math.LN2),
     /** @type {Zahlen_Q} - 10の自然対数の近似値 */
-    LN10: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.LN10) : new Zahlen_Q(147948n, 64253n))(),
+    LN10: Zahlen_new(Math.LN10),
     /** @type {Zahlen_Q} - 自然対数の底と2の底の対数の近似値 */
-    LOG2E: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.LOG2E) : new Zahlen_Q(36744n, 25469n))(),
+    LOG2E: Zahlen_new(Math.LOG2E),
     /** @type {Zahlen_Q} - 自然対数の底と10の底の対数の近似値 */
-    LOG10E: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.LOG10E) : new Zahlen_Q(23210n, 53443n))(),
+    LOG10E: Zahlen_new(Math.LOG10E),
     /** @type {Zahlen_Q} - 円周率の近似値 */
-    PI: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.PI) : new Zahlen_Q(23210n, 53443n))(),
+    PI: Zahlen_new(Math.PI),
     /** @type {Zahlen_Q} - 1/2の平方根の近似値 */
-    SQRT1_2: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.SQRT1_2) : new Zahlen_Q(33461n, 47321n))(),
+    SQRT1_2: Zahlen_new(Math.SQRT1_2),
     /** @type {Zahlen_Q} - 2の平方根の近似値 */
-    SQRT2: (() => Zahlen_Math_CONST_MODE === "calc" ? Zahlen_tools.approximation(Math.SQRT2) : new Zahlen_Q(66922n, 47321n))(),
+    SQRT2: Zahlen_new(Math.SQRT2),
     /** @type {Zahlen_Qi} - 虚数単位i */
-    I: new Zahlen_Qi(0n, 1n, 1n, 1n),
+    I: Zahlen_new(new Zahlen_Qi(0n, 1n, 1n, 1n)),
     /** ======== 丸め・特徴 ======== **/
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 切り上げを返す */
     ceil: x => {
