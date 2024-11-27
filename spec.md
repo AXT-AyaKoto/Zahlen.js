@@ -1011,7 +1011,8 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `x`の`y`乗
 
 > **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
+> - `x`が`Zahlen_Qi`の場合は主値を返します。
+>     - $\textrm{pv } z^a = e^{a \textrm{Log} z}$
 
 #### *(static)* `Zahlen_Math.sqrt(x)`
 
@@ -1028,7 +1029,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.pow(x, new Zahlen_Q(1n, 2n))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.cbrt(x)`
 
@@ -1045,7 +1045,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.pow(x, new Zahlen_Q(1n, 3n))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.hypot(...values)`
 
@@ -1062,7 +1061,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.sqrt(values.reduce((acc, val) => Zahlen_Math.add(acc, Zahlen_Math.pow(val, new Zahlen_Z(2n))), new Zahlen_Z(0n)))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 ### Methods > Min & Max
 

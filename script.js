@@ -890,7 +890,7 @@ const Zahlen_Math = {
         ) {
             return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), Zahlen_new(y.Rd)), Zahlen_new(-1n));
         }
-        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので暫定エラー ---- */
+        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので飛ばす ---- */
         if (
             x instanceof Zahlen_Q
             && y instanceof Zahlen_Q
@@ -898,7 +898,7 @@ const Zahlen_Math = {
             && Zahlen_Math.gt(y, Zahlen_new(0n))
             && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(0n))
         ) {
-            throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
+            // throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
         }
         /* ---- 12. x∈ℚ かつ y∈ℚ⁻ なら 1 / (x ^ |y|) になる  ---- */
         if (
@@ -908,8 +908,13 @@ const Zahlen_Math = {
         ) {
             return Zahlen_Math.div(Zahlen_new(1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
         }
-        /* ---- ↑以外はお手上げなので諦めてエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error (Sorry)");
+        /* ---- ↑以外でQi範囲なら牛刀割鶏だが複素数範囲の定義を使います  ---- */
+        if (x instanceof Zahlen_Qi && y instanceof Zahlen_Qi) {
+            /* pv z^a = e^(a Log z) ※pvは"主値" */
+            return Zahlen_Math.exp(Zahlen_Math.mul(y, Zahlen_Math.log(x)));
+        }
+        /* ---- Qi範囲外ならエラーを返す ---- */
+        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 平方根を返す */
     sqrt: x => {
