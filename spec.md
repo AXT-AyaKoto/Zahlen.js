@@ -905,9 +905,9 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 数値`x`の指数関数`e^x`を返します。
 
 - Parameters:
-    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 指数関数を求める数値
+    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 求める数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 指数関数
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - $e^x$
 
 > **Notes:**
 > - `x`が`Zahlen_Qi`の場合、複素指数関数を計算します。
@@ -923,7 +923,10 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Parameters:
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 計算する数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `exp(x) - 1`の結果
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - $e^x - 1$
+
+> **Notes:**
+> - `Zahlen_Math.sub(Zahlen_Math.exp(x), Zahlen_new(1))`と等価です。
 
 #### *(static)* `Zahlen_Math.log(x)`
 

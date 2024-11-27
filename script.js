@@ -752,12 +752,10 @@ const Zahlen_Math = {
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.exp(Number(x)));
         /* ---- Qi範囲 : e^(a+bi) = e^a * (cos b + i sin b) ---- */
         if (x instanceof Zahlen_Qi) {
-            const a = new Zahlen_Q(x.Rn, x.Rd);
-            const b = new Zahlen_Q(x.In, x.Id);
-            const exp_a = Zahlen_Math.exp(a);
-            const cos_b = Zahlen_Math.cos(b);
-            const sin_b = Zahlen_Math.sin(b);
-            const i_sin_b = Zahlen_Math.mul(sin_b, new Zahlen_Qi(0n, 1n, 1n, 1n));
+            const exp_a = Zahlen_Math.exp(x.real);
+            const cos_b = Zahlen_Math.cos(x.imag);
+            const sin_b = Zahlen_Math.sin(x.imag);
+            const i_sin_b = Zahlen_Math.mul(sin_b, Zahlen_Math.I);
             return Zahlen_Math.mul(exp_a, Zahlen_Math.add(cos_b, i_sin_b));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -873,7 +871,7 @@ const Zahlen_Math = {
             && Zahlen_Math.gt(y, Zahlen_new(0n))
             && Zahlen_Math.eq(Zahlen_new(y.Rd), new Zahlen_Z(2n))
         ) {
-            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), new Zahlen_Qi(0n, 1n, 1n, 1n));
+            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), Zahlen_Math.I);
         }
         /* ---- 10. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが奇数 なら -( (|x|^n)^(1/d) ) になる(らしい) ---- */
         if (
@@ -975,7 +973,7 @@ const Zahlen_Math = {
     orthogonal: (abs, amp) => {
         return Zahlen_Math.add(
             Zahlen_Math.mul(abs, Zahlen_Math.cos(amp)),
-            Zahlen_Math.mul(abs, Zahlen_Math.mul(new Zahlen_Qi(0n, 1n, 1n, 1n), Zahlen_Math.sin(amp)))
+            Zahlen_Math.mul(abs, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_Math.sin(amp)))
         );
     },
 };
