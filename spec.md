@@ -571,9 +571,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 剰余結果
 
-> **Notes:**
-> - `x`, `y`のいずれかが`Zahlen_Qi`の場合については未実装です
-
 ### Methods > Comparison
 
 #### *(static)* `Zahlen_Math.eq(x, y)`
@@ -1134,6 +1131,22 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 > **Notes:**
 > - 返り値$\phi$の範囲は$\pi\lt\phi\le\pi$です。
 > - `Zahlen_Math.atan2(x.imag, x.real)`と等価です。
+
+#### *(static)* `Zahlen_Math.phase(x)`
+
+```js
+/** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
+```
+
+複素数`x`の偏角(位相)を返します。
+
+- Parameters:
+    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角を求める複素数
+- Returns:
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角(ラジアン)
+
+> **Notes:**
+> - `Zahlen_Math.arg`のエイリアスです。
 
 #### *(static)* `Zahlen_Math.polar(x)`
 

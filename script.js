@@ -1024,6 +1024,8 @@ const Zahlen_Math = {
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(-π<y≦π)) */
+    phase: (...args) => Zahlen_Math.arg(...args),
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => [(Zahlen_Qi|Zahlen_Q|Zahlen_Z), (Zahlen_Qi|Zahlen_Q|Zahlen_Z)]} -  極形式表現を`[絶対値, 偏角]`で返す。`[Zahlen.Math.abs(x), Zahlen.Math.phase(x)]`と等価 */
     polar: (x) => {
         return [Zahlen_Math.abs(x), Zahlen_Math.phase(x)];
