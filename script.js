@@ -838,6 +838,12 @@ const Zahlen_Math = {
     log10: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log10を借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log10(Number(x)));
+        /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
+        if (x instanceof Zahlen_Qi) {
+            const numerator = Zahlen_Math.log(x);
+            const denominator = Zahlen_Math.log(Zahlen_new(10));
+            return Zahlen_Math.div(numerator, denominator);
+        };
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -845,6 +851,12 @@ const Zahlen_Math = {
     log2: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log2を借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log2(Number(x)));
+        /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
+        if (x instanceof Zahlen_Qi) {
+            const numerator = Zahlen_Math.log(x);
+            const denominator = Zahlen_Math.log(Zahlen_new(2));
+            return Zahlen_Math.div(numerator, denominator);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },

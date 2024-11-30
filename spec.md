@@ -960,9 +960,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 10を底とする対数
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.log2(x)`
 
 ```js
@@ -975,9 +972,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 2を底とする対数を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 2を底とする対数
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 ### Methods > Power & Root
 
