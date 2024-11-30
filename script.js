@@ -586,6 +586,14 @@ const Zahlen_Math = {
             const y_abs = new Zahlen_Q(Zahlen_tools.abs(y.Rn), y.Rd);
             return Zahlen_Math.mul(new Zahlen_Q(x_sign, 1n), Zahlen_Math.mod(x_abs, y_abs));
         }
+        /* ---- Qi範囲 : x mod y = (y/(2πi))log(e^((2π/y)ix)) ---- */
+        if (x instanceof Zahlen_Qi && y instanceof Zahlen_Qi) {
+            const two_pi = Zahlen_Math.mul(Zahlen_new(2n), Zahlen_Math.PI);
+            const two_pi_i = Zahlen_Math.mul(two_pi, Zahlen_Math.I);
+            const two_pi_div_y = Zahlen_Math.div(two_pi, y);
+            const log = Zahlen_Math.log(Zahlen_Math.exp(Zahlen_Math.mul(two_pi_div_y, Zahlen_Math.mul(Zahlen_Math.I, x))));
+            return Zahlen_Math.mul(Zahlen_Math.div(y, two_pi_i), log);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
