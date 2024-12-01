@@ -842,9 +842,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.acosh(x)`
 
 ```js
@@ -858,8 +855,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線余弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atanh(x)`
 
@@ -873,9 +868,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正接を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正接
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 ### Methods > Exponential & Logarithmic
 
