@@ -734,7 +734,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.acos(x)`
 
@@ -751,7 +750,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atan(x)`
 
@@ -768,7 +766,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atan2(y, x)`
 

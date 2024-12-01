@@ -702,6 +702,12 @@ const Zahlen_Math = {
     asin: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.asinを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.asin(Number(x)));
+        /* ---- Qi範囲 : asin x = -i log( ix + sqrt( 1 - x^2 ) ) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const ix = Zahlen_Math.mul(Zahlen_Math.I, x);
+            const sqrt = Zahlen_Math.sqrt(Zahlen_Math.sub(Zahlen_new(1n), Zahlen_Math.pow(x, new Zahlen_Z(2n))));
+            return Zahlen_Math.mul(Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(-1n)), Zahlen_Math.log(Zahlen_Math.add(ix, sqrt)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -709,6 +715,8 @@ const Zahlen_Math = {
     acos: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.acosを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.acos(Number(x)));
+        /* ---- Qi範囲 : acos x = pi/2 - asin x ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.sub(Zahlen_Math.div(Zahlen_Math.PI, Zahlen_new(2n)), Zahlen_Math.asin(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -716,6 +724,13 @@ const Zahlen_Math = {
     atan: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.atanを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.atan(Number(x)));
+        /* ---- Qi範囲 : atan x = i/2 * { log( 1-ix ) - log( 1+ix) } ---- */
+        if (x instanceof Zahlen_Qi) { 
+            const ix = Zahlen_Math.mul(Zahlen_Math.I, x);
+            const log1 = Zahlen_Math.log(Zahlen_Math.sub(Zahlen_new(1n), ix));
+            const log2 = Zahlen_Math.log(Zahlen_Math.add(Zahlen_new(1n), ix));
+            return Zahlen_Math.mul(Zahlen_Math.div(Zahlen_Math.I, Zahlen_new(2n)), Zahlen_Math.sub(log1, log2));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
