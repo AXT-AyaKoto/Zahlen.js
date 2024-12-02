@@ -586,6 +586,14 @@ const Zahlen_Math = {
             const y_abs = new Zahlen_Q(Zahlen_tools.abs(y.Rn), y.Rd);
             return Zahlen_Math.mul(new Zahlen_Q(x_sign, 1n), Zahlen_Math.mod(x_abs, y_abs));
         }
+        /* ---- Qi範囲 : x mod y = (y/(2πi))log(e^((2π/y)ix)) ---- */
+        if (x instanceof Zahlen_Qi && y instanceof Zahlen_Qi) {
+            const two_pi = Zahlen_Math.mul(Zahlen_new(2n), Zahlen_Math.PI);
+            const two_pi_i = Zahlen_Math.mul(two_pi, Zahlen_Math.I);
+            const two_pi_div_y = Zahlen_Math.div(two_pi, y);
+            const log = Zahlen_Math.log(Zahlen_Math.exp(Zahlen_Math.mul(two_pi_div_y, Zahlen_Math.mul(Zahlen_Math.I, x))));
+            return Zahlen_Math.mul(Zahlen_Math.div(y, two_pi_i), log);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -657,6 +665,13 @@ const Zahlen_Math = {
     sin: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.sinを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.sin(Number(x)));
+        /* ---- Qi範囲 : sin z = (e^iz - e^(-iz)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_iz = Zahlen_Math.exp(Zahlen_Math.mul(x, Zahlen_Math.I));
+            const exp_minus_iz = Zahlen_Math.exp(Zahlen_Math.mul(Zahlen_Math.neg(x), Zahlen_Math.I));
+            const exp_diff = Zahlen_Math.sub(exp_iz, exp_minus_iz);
+            return Zahlen_Math.div(exp_diff, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -664,6 +679,13 @@ const Zahlen_Math = {
     cos: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.cosを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.cos(Number(x)));
+        /* ---- Qi範囲 : cos z = (e^iz + e^(-iz)) / 2 ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_iz = Zahlen_Math.exp(Zahlen_Math.mul(x, Zahlen_Math.I));
+            const exp_minus_iz = Zahlen_Math.exp(Zahlen_Math.mul(Zahlen_Math.neg(x), Zahlen_Math.I));
+            const exp_sum = Zahlen_Math.add(exp_iz, exp_minus_iz);
+            return Zahlen_Math.div(exp_sum, Zahlen_new(2n));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -671,6 +693,8 @@ const Zahlen_Math = {
     tan: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.tanを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.tan(Number(x)));
+        /* ---- Qi範囲 : tan z = sin z / cos z ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.div(Zahlen_Math.sin(x), Zahlen_Math.cos(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -678,6 +702,12 @@ const Zahlen_Math = {
     asin: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.asinを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.asin(Number(x)));
+        /* ---- Qi範囲 : asin x = -i log( ix + sqrt( 1 - x^2 ) ) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const ix = Zahlen_Math.mul(Zahlen_Math.I, x);
+            const sqrt = Zahlen_Math.sqrt(Zahlen_Math.sub(Zahlen_new(1n), Zahlen_Math.pow(x, new Zahlen_Z(2n))));
+            return Zahlen_Math.mul(Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(-1n)), Zahlen_Math.log(Zahlen_Math.add(ix, sqrt)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -685,6 +715,8 @@ const Zahlen_Math = {
     acos: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.acosを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.acos(Number(x)));
+        /* ---- Qi範囲 : acos x = pi/2 - asin x ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.sub(Zahlen_Math.div(Zahlen_Math.PI, Zahlen_new(2n)), Zahlen_Math.asin(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -692,21 +724,35 @@ const Zahlen_Math = {
     atan: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.atanを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.atan(Number(x)));
+        /* ---- Qi範囲 : atan x = i/2 * { log( 1-ix ) - log( 1+ix) } ---- */
+        if (x instanceof Zahlen_Qi) {
+            const ix = Zahlen_Math.mul(Zahlen_Math.I, x);
+            const log1 = Zahlen_Math.log(Zahlen_Math.sub(Zahlen_new(1n), ix));
+            const log2 = Zahlen_Math.log(Zahlen_Math.add(Zahlen_new(1n), ix));
+            return Zahlen_Math.mul(Zahlen_Math.div(Zahlen_Math.I, Zahlen_new(2n)), Zahlen_Math.sub(log1, log2));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
-    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z, x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 2つの引数の逆正接を返す */
+    /** @type {(y: Zahlen_Q|Zahlen_Z, x: Zahlen_Q|Zahlen_Z) => Zahlen_Q|Zahlen_Z} - 2つの引数の逆正接を返す */
     atan2: (y, x) => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.atan2を借りちゃえばOK ---- */
         if (y instanceof Zahlen_Q && x instanceof Zahlen_Q) return Zahlen_new(Math.atan2(Number(y), Number(x)));
-        /* ---- Qi範囲外ならエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
+        /* ---- Q範囲外ならエラーを返す ---- */
+        throw new TypeError("[Zahlen.js] Zahlen_Math.atan2() can only accept Zahlen_Q( or Zahlen_Z) as arguments");
     },
     /** ======== 双曲線関数・逆双曲線関数 ======== **/
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 双曲線正弦を返す */
     sinh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.sinhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.sinh(Number(x)));
+        /* ---- Qi範囲 : sinh z = (e^z - e^(-z)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_z = Zahlen_Math.exp(x);
+            const exp_minus_z = Zahlen_Math.exp(Zahlen_Math.neg(x));
+            const exp_diff = Zahlen_Math.sub(exp_z, exp_minus_z);
+            return Zahlen_Math.div(exp_diff, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -714,6 +760,13 @@ const Zahlen_Math = {
     cosh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.coshを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.cosh(Number(x)));
+        /* ---- Qi範囲 : cosh z = (e^z + e^(-z)) / 2i ---- */
+        if (x instanceof Zahlen_Qi) {
+            const exp_z = Zahlen_Math.exp(x);
+            const exp_minus_z = Zahlen_Math.exp(Zahlen_Math.neg(x));
+            const exp_sum = Zahlen_Math.add(exp_z, exp_minus_z);
+            return Zahlen_Math.div(exp_sum, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_new(2n)));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -721,6 +774,12 @@ const Zahlen_Math = {
     tanh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.tanhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.tanh(Number(x)));
+        /* ---- Qi範囲 : tanh z = sinh z / cosh z ---- */
+        if (x instanceof Zahlen_Qi) {
+            const sinh_z = Zahlen_Math.sinh(x);
+            const cosh_z = Zahlen_Math.cosh(x);
+            return Zahlen_Math.div(sinh_z, cosh_z);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -728,6 +787,11 @@ const Zahlen_Math = {
     asinh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.asinhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.asinh(Number(x)));
+        /* ---- Qi範囲 : asinh z =  log_e( z + sqrt( z^2 + 1 ) ) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const sqrt = Zahlen_Math.sqrt(Zahlen_Math.add(Zahlen_Math.pow(x, new Zahlen_Z(2n)), Zahlen_new(1n)));
+            return Zahlen_Math.log(Zahlen_Math.add(x, sqrt));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -735,6 +799,13 @@ const Zahlen_Math = {
     acosh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.acoshを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.acosh(Number(x)));
+        /* ---- Qi範囲 : acosh z =  log_e( z + sqrt( z + 1 ) * sqrt( z - 1 ) ) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const sqrt1 = Zahlen_Math.sqrt(Zahlen_Math.add(x, Zahlen_new(1n)));
+            const sqrt2 = Zahlen_Math.sqrt(Zahlen_Math.sub(x, Zahlen_new(1n)));
+            const sqrt = Zahlen_Math.mul(sqrt1, sqrt2);
+            return Zahlen_Math.log(Zahlen_Math.add(x, sqrt));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -742,6 +813,13 @@ const Zahlen_Math = {
     atanh: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.atanhを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.atanh(Number(x)));
+        /* ---- Qi範囲 : atanh z =  1/2 * log_e( (1+z)/(1-z) ) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const z_plus_1 = Zahlen_Math.add(x, Zahlen_new(1n));
+            const z_minus_1 = Zahlen_Math.sub(x, Zahlen_new(1n));
+            const log = Zahlen_Math.log(Zahlen_Math.div(z_plus_1, z_minus_1));
+            return Zahlen_Math.mul(Zahlen_Math.div(Zahlen_new(1n), Zahlen_new(2n)), log);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -752,12 +830,10 @@ const Zahlen_Math = {
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.exp(Number(x)));
         /* ---- Qi範囲 : e^(a+bi) = e^a * (cos b + i sin b) ---- */
         if (x instanceof Zahlen_Qi) {
-            const a = new Zahlen_Q(x.Rn, x.Rd);
-            const b = new Zahlen_Q(x.In, x.Id);
-            const exp_a = Zahlen_Math.exp(a);
-            const cos_b = Zahlen_Math.cos(b);
-            const sin_b = Zahlen_Math.sin(b);
-            const i_sin_b = Zahlen_Math.mul(sin_b, new Zahlen_Qi(0n, 1n, 1n, 1n));
+            const exp_a = Zahlen_Math.exp(x.real);
+            const cos_b = Zahlen_Math.cos(x.imag);
+            const sin_b = Zahlen_Math.sin(x.imag);
+            const i_sin_b = Zahlen_Math.mul(sin_b, Zahlen_Math.I);
             return Zahlen_Math.mul(exp_a, Zahlen_Math.add(cos_b, i_sin_b));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -774,14 +850,21 @@ const Zahlen_Math = {
     log: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.logを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log(Number(x)));
+        /* ---- Qi範囲 : Log z = log |z| + i (Arg z) ---- */
+        if (x instanceof Zahlen_Qi) {
+            const abs_z = Zahlen_Math.abs(x);
+            const arg_z = Zahlen_Math.arg(x);
+            return Zahlen_Math.add(Zahlen_Math.log(abs_z), Zahlen_Math.mul(arg_z, Zahlen_Math.I));
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
-    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(0≦y≦2π)) */
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - log(1 + x)を返す */
     log1p: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log1p(Number(x)));
+        /* ---- Qi範囲 : Zahlen_Math.log()を借りて1足せばOK ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.log(Zahlen_Math.add(x, Zahlen_new(1)));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -789,6 +872,12 @@ const Zahlen_Math = {
     log10: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log10を借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log10(Number(x)));
+        /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
+        if (x instanceof Zahlen_Qi) {
+            const numerator = Zahlen_Math.log(x);
+            const denominator = Zahlen_Math.log(Zahlen_new(10));
+            return Zahlen_Math.div(numerator, denominator);
+        };
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -796,6 +885,12 @@ const Zahlen_Math = {
     log2: x => {
         /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.log2を借りちゃえばOK ---- */
         if (x instanceof Zahlen_Q) return Zahlen_new(Math.log2(Number(x)));
+        /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
+        if (x instanceof Zahlen_Qi) {
+            const numerator = Zahlen_Math.log(x);
+            const denominator = Zahlen_Math.log(Zahlen_new(2));
+            return Zahlen_Math.div(numerator, denominator);
+        }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
@@ -873,7 +968,7 @@ const Zahlen_Math = {
             && Zahlen_Math.gt(y, Zahlen_new(0n))
             && Zahlen_Math.eq(Zahlen_new(y.Rd), new Zahlen_Z(2n))
         ) {
-            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), new Zahlen_Qi(0n, 1n, 1n, 1n));
+            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), Zahlen_Math.I);
         }
         /* ---- 10. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが奇数 なら -( (|x|^n)^(1/d) ) になる(らしい) ---- */
         if (
@@ -885,7 +980,7 @@ const Zahlen_Math = {
         ) {
             return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), Zahlen_new(y.Rd)), Zahlen_new(-1n));
         }
-        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので暫定エラー ---- */
+        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので飛ばす ---- */
         if (
             x instanceof Zahlen_Q
             && y instanceof Zahlen_Q
@@ -893,7 +988,7 @@ const Zahlen_Math = {
             && Zahlen_Math.gt(y, Zahlen_new(0n))
             && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(0n))
         ) {
-            throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
+            // throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
         }
         /* ---- 12. x∈ℚ かつ y∈ℚ⁻ なら 1 / (x ^ |y|) になる  ---- */
         if (
@@ -903,8 +998,13 @@ const Zahlen_Math = {
         ) {
             return Zahlen_Math.div(Zahlen_new(1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
         }
-        /* ---- ↑以外はお手上げなので諦めてエラーを返す ---- */
-        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error (Sorry)");
+        /* ---- ↑以外でQi範囲なら牛刀割鶏だが複素数範囲の定義を使います  ---- */
+        if (x instanceof Zahlen_Qi && y instanceof Zahlen_Qi) {
+            /* pv z^a = e^(a Log z) ※pvは"主値" */
+            return Zahlen_Math.exp(Zahlen_Math.mul(y, Zahlen_Math.log(x)));
+        }
+        /* ---- Qi範囲外ならエラーを返す ---- */
+        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 平方根を返す */
     sqrt: x => {
@@ -963,10 +1063,15 @@ const Zahlen_Math = {
     radians: (x) => {
         return Zahlen_Math.mul(x, Zahlen_Math.div(Zahlen_Math.PI, new Zahlen_Z(180n)));
     },
-    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 偏角(位相)を返す。`Zahlen.Math.atan2(x.imag, x.real)`と等価 */
-    phase: (x) => {
-        return Zahlen_Math.atan2(x.imag, x.real);
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(-π<y≦π)) */
+    arg: x => {
+        /* ---- Qi範囲 : atan2をそのまま借りる ---- */
+        if (x instanceof Zahlen_Qi) return Zahlen_Math.atan2(x.imag, x.real);
+        /* ---- Qi範囲外ならエラーを返す ---- */
+        throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
     },
+    /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 複素数の偏角(の主値(-π<y≦π)) */
+    phase: (...args) => Zahlen_Math.arg(...args),
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => [(Zahlen_Qi|Zahlen_Q|Zahlen_Z), (Zahlen_Qi|Zahlen_Q|Zahlen_Z)]} -  極形式表現を`[絶対値, 偏角]`で返す。`[Zahlen.Math.abs(x), Zahlen.Math.phase(x)]`と等価 */
     polar: (x) => {
         return [Zahlen_Math.abs(x), Zahlen_Math.phase(x)];
@@ -975,7 +1080,7 @@ const Zahlen_Math = {
     orthogonal: (abs, amp) => {
         return Zahlen_Math.add(
             Zahlen_Math.mul(abs, Zahlen_Math.cos(amp)),
-            Zahlen_Math.mul(abs, Zahlen_Math.mul(new Zahlen_Qi(0n, 1n, 1n, 1n), Zahlen_Math.sin(amp)))
+            Zahlen_Math.mul(abs, Zahlen_Math.mul(Zahlen_Math.I, Zahlen_Math.sin(amp)))
         );
     },
 };

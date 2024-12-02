@@ -571,9 +571,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 剰余結果
 
-> **Notes:**
-> - `x`, `y`のいずれかが`Zahlen_Qi`の場合については未実装です
-
 ### Methods > Comparison
 
 #### *(static)* `Zahlen_Math.eq(x, y)`
@@ -689,7 +686,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.cos(x)`
 
@@ -706,7 +702,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.tan(x)`
 
@@ -723,7 +718,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.asin(x)`
 
@@ -740,7 +734,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.acos(x)`
 
@@ -757,7 +750,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atan(x)`
 
@@ -774,26 +766,27 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atan2(y, x)`
 
 ```js
-/** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z, x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
+/** @type {(y: Zahlen_Q|Zahlen_Z, x: Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
 ```
 
 [atan2](https://ja.wikipedia.org/wiki/Atan2)を返します。
 返り値は(0,0)と(x,y)を結ぶ半直線と正のx軸のが成す角の角度を表します。
 
 - Parameters:
-    - `y`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
-    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
+    - `y`: `Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
+    - `x`: `Zahlen_Q|Zahlen_Z` - 逆正接を求める数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆正接
+    - `Zahlen_Q|Zahlen_Z` - 逆正接
 
 > **Notes:**
 > - 返り値はラジアン(弧度法)です。°単位(角度法)に変換したい場合は`Zahlen_Math.degrees()`を使用してください。
-> - `x`, `y`のいずれかが`Zahlen_Qi`の場合については未実装です。
+> - 返り値$\phi$の範囲は$\pi\lt\phi\le\pi$です。
+> - `x`, `y`のいずれかが`Zahlen_Qi`の場合は`TypeError`となります。
+>     - メッセージ : `[Zahlen.js] Zahlen_Math.atan2() can only accept Zahlen_Q( or Zahlen_Z) as arguments`
 
 ### Methods > Hyperbolic
 
@@ -810,9 +803,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線正弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.cosh(x)`
 
 ```js
@@ -825,9 +815,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線余弦を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線余弦
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.tanh(x)`
 
@@ -842,9 +829,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 双曲線正接
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.asinh(x)`
 
 ```js
@@ -857,9 +841,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正弦を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正弦
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.acosh(x)`
 
@@ -874,8 +855,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線余弦
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.atanh(x)`
 
@@ -890,9 +869,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 逆双曲線正接
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 ### Methods > Exponential & Logarithmic
 
 #### *(static)* `Zahlen_Math.exp(x)`
@@ -904,9 +880,9 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 数値`x`の指数関数`e^x`を返します。
 
 - Parameters:
-    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 指数関数を求める数値
+    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 求める数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 指数関数
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - $e^x$
 
 > **Notes:**
 > - `x`が`Zahlen_Qi`の場合、複素指数関数を計算します。
@@ -922,7 +898,10 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Parameters:
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 計算する数値
 - Returns:
-    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `exp(x) - 1`の結果
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - $e^x - 1$
+
+> **Notes:**
+> - `Zahlen_Math.sub(Zahlen_Math.exp(x), Zahlen_new(1))`と等価です。
 
 #### *(static)* `Zahlen_Math.log(x)`
 
@@ -938,8 +917,8 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 自然対数
 
 > **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
->     - $\textrm{Log}\,{x}$(※虚部bが$-\pi\lt{b}\le\pi$を満たす、複素対数函数の主値)を返すようにする予定です。
+> - `x`が`Zahlen_Qi`の場合には主値を返します。
+>     - $\textrm{Log} z = \log_e|z| + i (\textrm{Arg} z)$(ただし$\textrm{Arg} z$は$-\pi\lt\arg{z}\le\pi$に限定した$\arg$)
 
 #### *(static)* `Zahlen_Math.log1p(x)`
 
@@ -954,6 +933,9 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `log(1 + x)`の結果
 
+> **Notes:**
+> - `x`が`Zahlen_Qi`の場合、`Zahlen_Math.add(Zahlen_Math.log(z), Zahlen_new(1))`と等価です。
+
 #### *(static)* `Zahlen_Math.log10(x)`
 
 ```js
@@ -967,9 +949,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 10を底とする対数
 
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
-
 #### *(static)* `Zahlen_Math.log2(x)`
 
 ```js
@@ -982,9 +961,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 2を底とする対数を求める数値
 - Returns:
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 2を底とする対数
-
-> **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 ### Methods > Power & Root
 
@@ -1003,7 +979,8 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - `x`の`y`乗
 
 > **Notes:**
-> - `x`が`Zahlen_Qi`の場合については未実装です。
+> - `x`, `y`のいずれかが`Zahlen_Qi`の場合は主値を返します。
+>     - $\textrm{pv } z^a = e^{a \textrm{Log} z}$
 
 #### *(static)* `Zahlen_Math.sqrt(x)`
 
@@ -1020,7 +997,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.pow(x, new Zahlen_Q(1n, 2n))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.cbrt(x)`
 
@@ -1037,7 +1013,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.pow(x, new Zahlen_Q(1n, 3n))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 #### *(static)* `Zahlen_Math.hypot(...values)`
 
@@ -1054,7 +1029,6 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 
 > **Notes:**
 > - `Zahlen_Math.sqrt(values.reduce((acc, val) => Zahlen_Math.add(acc, Zahlen_Math.pow(val, new Zahlen_Z(2n))), new Zahlen_Z(0n)))`と等価です。
-> - `x`が`Zahlen_Qi`の場合については未実装です。
 
 ### Methods > Min & Max
 
@@ -1124,6 +1098,23 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
 > **Notes:**
 > - `Zahlen_Math.mul(x, Zahlen_Math.div(Zahlen_Math.PI, new Zahlen_Z(180n)))`と等価です。
 
+#### *(static)* `Zahlen_Math.arg(x)`
+
+```js
+/** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} */
+```
+
+複素数`x`の偏角(位相)を返します。
+
+- Parameters:
+    - `x`: `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角を求める複素数
+- Returns:
+    - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角(ラジアン)
+
+> **Notes:**
+> - 返り値$\phi$の範囲は$\pi\lt\phi\le\pi$です。
+> - `Zahlen_Math.atan2(x.imag, x.real)`と等価です。
+
 #### *(static)* `Zahlen_Math.phase(x)`
 
 ```js
@@ -1138,7 +1129,7 @@ Zahlen_Mathオブジェクトは、各種数学関数を提供します。
     - `Zahlen_Qi|Zahlen_Q|Zahlen_Z` - 偏角(ラジアン)
 
 > **Notes:**
-> - `Zahlen_Math.atan2(x.imag, x.real)`と等価です。
+> - `Zahlen_Math.arg`のエイリアスです。
 
 #### *(static)* `Zahlen_Math.polar(x)`
 
