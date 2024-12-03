@@ -310,6 +310,10 @@ const Zahlen_Qi = class Zahlen_Qi {
     mod(y) {
         return Zahlen_Math.mod(this, y);
     }
+    /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 累乗(`x ** y`) */
+    pow(y) {
+        return Zahlen_Math.pow(this, y);
+    }
     /** @type {(y: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => boolean} - 等価(`x == y`) */
     eq(y) {
         return Zahlen_Math.eq(this, y);

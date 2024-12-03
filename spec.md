@@ -198,6 +198,17 @@ Zahlen_Qiオブジェクトは「ガウス有理数」、すなわち実部と�
 - Returns:
     - `Zahlen_Qi` - 剰余結果
 
+#### `Zahlen_Qi.pow(n)`
+
+```js
+/** @type {(n: number|bigint) => Zahlen_Qi} */
+```
+
+このガウス有理数を`n`乗した結果を返します。
+
+- Parameters:
+    - `n`: `number|bigint` - 乗数
+
 #### `Zahlen_Qi.eq(y)`
 
 ```js
