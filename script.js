@@ -935,7 +935,6 @@ const Zahlen_Math = {
     sqrt: x => {
         /* ---- 平方根は1/2乗なので、powを借りる ---- */
         try {
-            console.log(x);
             return Zahlen_Math.pow(x, new Zahlen_Q(1n, 2n));
         } catch (error) {
             throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
