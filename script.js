@@ -820,8 +820,8 @@ const Zahlen_Math = {
     },
     /** @type {(x: Zahlen_Qi|Zahlen_Q|Zahlen_Z) => Zahlen_Qi|Zahlen_Q|Zahlen_Z} - 自然対数を返す */
     log: x => {
-        /* ---- Q範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.logを借りちゃえばOK ---- */
-        if (x instanceof Zahlen_Q) return Zahlen_new(Math.log(Number(x)));
+        /* ---- Q⁺範囲 : Zahlen_newがnumber→Zahlen_Qをやってくれるので、Math.logを借りちゃえばOK ---- */
+        if (x instanceof Zahlen_Q && x.gt(Zahlen_new(0))) return Zahlen_new(Math.log(Number(x)));
         /* ---- Qi範囲 : Log z = log |z| + i (Arg z) ---- */
         if (x instanceof Zahlen_Qi) {
             const abs_z = Zahlen_Math.abs(x);
@@ -935,6 +935,7 @@ const Zahlen_Math = {
     sqrt: x => {
         /* ---- 平方根は1/2乗なので、powを借りる ---- */
         try {
+            console.log(x);
             return Zahlen_Math.pow(x, new Zahlen_Q(1n, 2n));
         } catch (error) {
             throw new Error("[Zahlen.js] Zahlen_Math Invalid Type Error");
