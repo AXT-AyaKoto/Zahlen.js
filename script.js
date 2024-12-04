@@ -91,7 +91,7 @@ const Zahlen_new = (n) => {
     /** bigintの場合 : そのままZahlen_Zに変換するだけ */
     if (typeof n === 'bigint') return new Zahlen_Z(n);
     /** numberの場合 : 十分な近似値を表すZahlen_Qに変換する */
-    if (typeof n === 'number') return Zahlen_tools.approximation(n);
+    if (typeof n === 'number') return Zahlen_new(Zahlen_tools.approximation(n));
     /** Zahlen_Qiの場合 : 虚部が0ならZahlen_Qに変換、さらに実部の分母が1ならZahlen_Zに変換、それ以外ならQiで返す */
     if (n instanceof Zahlen_Qi) {
         if (n.In === 0n) {
