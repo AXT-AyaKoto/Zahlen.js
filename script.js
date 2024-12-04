@@ -200,38 +200,6 @@ const Zahlen_tools = {
         const rational = binaryStrToRationalNumber(binaryStr);
         return new Zahlen_Q(rational.n, rational.d);
     },
-    /**
-     * ニュートン法を用いて、mのn乗根(の近似値)(の主値)を求める
-     * @param {Zahlen_Q} m - 有理数m
-     * @param {Zahlen_Z} n - 自然数n
-     * @returns {Zahlen_Q} - mのn乗根(の近似値)(の主値)
-     */
-    "nthRoot": (m, n) => {
-        /** @type {Zahlen_Q[]} - x_0, x_1…… */
-        const x = [new Zahlen_Q(1n, 1n)];
-        /** @description - ニュートン法の反復 */
-        for (let s = 0; s < 65536; s++) {
-            /** @type {Zahlen_Q} f(x_s) */
-            const f_x_s = Zahlen_Math.sub(Zahlen_Math.pow(x[s], n), m);
-            /** @type {Zahlen_Q} f'(x_s) */
-            const f_prime_x_s = Zahlen_Math.mul(n, Zahlen_Math.pow(x[s], Zahlen_Math.sub(n, Zahlen_new(1n))));
-            /** @type {Zahlen_Q} x_{s+1} */
-            const x_s_plus_1 = Zahlen_Math.sub(x[s], Zahlen_Math.div(f_x_s, f_prime_x_s));
-            /** @type {Zahlen_Q} x_{s+1} の整数部分 */
-            const x_s_plus_1_trunc = Zahlen_Math.trunc(x_s_plus_1);
-            /** @type {Zahlen_Q} x_{s+1} の小数部分 */
-            const x_s_plus_1_frac = Zahlen_Math.sub(x_s_plus_1, x_s_plus_1_trunc);
-            /** @type {Zahlen_Q} x_{s+1} の小数部分をZahlen_new(approximation)で適度に近似した値 */
-            const x_s_plus_1_frac_approx = Zahlen_new(Number(x_s_plus_1_frac));
-            /** @type {Zahlen_Q} x_{s+1} の整数部分と小数部分の和 */
-            x.push(Zahlen_Math.add(x_s_plus_1_trunc, x_s_plus_1_frac_approx));
-            /** @description - 収束判定(前のステップと値が同じならbreak) */
-            if (x[s].eq(x[s + 1])) break;
-        }
-        const answer = x.at(-1);
-        if (answer === undefined) throw new Error("[Zahlen.js] Zahlen_Math nthRoot Error");
-        return answer;
-    },
 };
 
 /**
@@ -955,54 +923,7 @@ const Zahlen_Math = {
         ) {
             return Zahlen_Math.div(new Zahlen_Qi(1n, 1n, 0n, 1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
         }
-        /* ---- 8. x∈ℚ⁺ かつ y∈ℚ⁺ なら (x^y.Rn)のy.Rd乗根 になる (有理数の自然数乗根はZahlen_tools.nthRoot()) ---- */
-        if (
-            x instanceof Zahlen_Q
-            && y instanceof Zahlen_Q
-            && Zahlen_Math.gt(x, Zahlen_new(0n))
-            && Zahlen_Math.gt(y, Zahlen_new(0n))
-        ) {
-            return Zahlen_tools.nthRoot(Zahlen_Math.pow(x, Zahlen_new(y.Rn)), Zahlen_new(y.Rd));
-        }
-        /* ---- 9. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rd = 2 なら (|x|^y.Rn)^(1/2)*i になる(らしい) ---- */
-        if (
-            x instanceof Zahlen_Q
-            && y instanceof Zahlen_Q
-            && Zahlen_Math.lt(x, Zahlen_new(0n))
-            && Zahlen_Math.gt(y, Zahlen_new(0n))
-            && Zahlen_Math.eq(Zahlen_new(y.Rd), new Zahlen_Z(2n))
-        ) {
-            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), new Zahlen_Z(2n)), Zahlen_Math.I);
-        }
-        /* ---- 10. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが奇数 なら -( (|x|^n)^(1/d) ) になる(らしい) ---- */
-        if (
-            x instanceof Zahlen_Q
-            && y instanceof Zahlen_Q
-            && Zahlen_Math.lt(x, Zahlen_new(0n))
-            && Zahlen_Math.gt(y, Zahlen_new(0n))
-            && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(1n))
-        ) {
-            return Zahlen_Math.mul(Zahlen_tools.nthRoot(Zahlen_Math.pow(Zahlen_Math.abs(x), Zahlen_new(y.Rn)), Zahlen_new(y.Rd)), Zahlen_new(-1n));
-        }
-        /* ---- 11. x∈ℚ⁻ かつ y∈ℚ⁺ かつ y.Rdが偶数 なら ……たぶん方法はあるんだろうけど思いつかないので飛ばす ---- */
-        if (
-            x instanceof Zahlen_Q
-            && y instanceof Zahlen_Q
-            && Zahlen_Math.lt(x, Zahlen_new(0n))
-            && Zahlen_Math.gt(y, Zahlen_new(0n))
-            && Zahlen_Math.eq(Zahlen_Math.mod(y, new Zahlen_Z(2n)), new Zahlen_Z(0n))
-        ) {
-            // throw new Error("[Zahlen.js] Zahlen_Math Negative Base Error (temporary)");
-        }
-        /* ---- 12. x∈ℚ かつ y∈ℚ⁻ なら 1 / (x ^ |y|) になる  ---- */
-        if (
-            x instanceof Zahlen_Q
-            && y instanceof Zahlen_Q
-            && Zahlen_Math.lt(y, Zahlen_new(0n))
-        ) {
-            return Zahlen_Math.div(Zahlen_new(1n), Zahlen_Math.pow(x, Zahlen_Math.abs(y)));
-        }
-        /* ---- ↑以外でQi範囲なら牛刀割鶏だが複素数範囲の定義を使います  ---- */
+        /* ---- ↑以外でQi範囲なら牛刀割鶏だが複素数範囲の定義を使うほうが速い  ---- */
         if (x instanceof Zahlen_Qi && y instanceof Zahlen_Qi) {
             /* pv z^a = e^(a Log z) ※pvは"主値" */
             return Zahlen_Math.exp(Zahlen_Math.mul(y, Zahlen_Math.log(x)));
