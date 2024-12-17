@@ -5,11 +5,11 @@
  * @param {bigint|number|Qi|Q|Z} n - 生成する数値
  * @returns {Qi|Q|Z}
  */
-const New = (n) => {
+const Zahlen = (n) => {
     /** bigintの場合 : そのままZに変換するだけ */
     if (typeof n === 'bigint') return new Z(n);
     /** numberの場合 : 十分な近似値を表すQに変換する */
-    if (typeof n === 'number') return New(Tools.approximation(n));
+    if (typeof n === 'number') return Zahlen(Tools.approximation(n));
     /** Qiの場合 : 虚部が0ならQに変換、さらに実部の分母が1ならZに変換、それ以外ならQiで返す */
     if (n instanceof Qi) {
         if (n.In === 0n) {
@@ -173,7 +173,7 @@ const Qi = class Qi {
     }
     /** @type {() => Q} - 共役な複素数 */
     conjugate() {
-        return New(new Qi(this.Rn, this.Rd, -this.In, this.Id));
+        return Zahlen(new Qi(this.Rn, this.Rd, -this.In, this.Id));
     }
     /* ======== 一般に中置演算子で表されることが多い各種演算 ======== */
     /** @type {(y: Qi|Q|Z) => Qi|Q|Z} - 加算(`x + y`) */
@@ -281,23 +281,23 @@ const Z = class Z extends Q {
 const zmath = {
     /** ======== 定数 ======== **/
     /** @type {Q} - ネイピア数の近似値 */
-    E: New(Math.E),
+    E: Zahlen(Math.E),
     /** @type {Q} - 2の自然対数の近似値 */
-    LN2: New(Math.LN2),
+    LN2: Zahlen(Math.LN2),
     /** @type {Q} - 10の自然対数の近似値 */
-    LN10: New(Math.LN10),
+    LN10: Zahlen(Math.LN10),
     /** @type {Q} - 自然対数の底と2の底の対数の近似値 */
-    LOG2E: New(Math.LOG2E),
+    LOG2E: Zahlen(Math.LOG2E),
     /** @type {Q} - 自然対数の底と10の底の対数の近似値 */
-    LOG10E: New(Math.LOG10E),
+    LOG10E: Zahlen(Math.LOG10E),
     /** @type {Q} - 円周率の近似値 */
-    PI: New(Math.PI),
+    PI: Zahlen(Math.PI),
     /** @type {Q} - 1/2の平方根の近似値 */
-    SQRT1_2: New(Math.SQRT1_2),
+    SQRT1_2: Zahlen(Math.SQRT1_2),
     /** @type {Q} - 2の平方根の近似値 */
-    SQRT2: New(Math.SQRT2),
+    SQRT2: Zahlen(Math.SQRT2),
     /** @type {Qi} - 虚数単位i */
-    I: New(new Qi(0n, 1n, 1n, 1n)),
+    I: Zahlen(new Qi(0n, 1n, 1n, 1n)),
     /** ======== 丸め・特徴 ======== **/
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 切り上げを返す */
     ceil: x => {
@@ -312,7 +312,7 @@ const zmath = {
         if (x instanceof Qi) {
             const real_ceil = zmath.ceil(new Q(x.Rn, x.Rd));
             const imag_ceil = zmath.ceil(new Q(x.In, x.Id));
-            return New(new Qi(real_ceil.Rn, real_ceil.Rd, imag_ceil.Rn, imag_ceil.Rd));
+            return Zahlen(new Qi(real_ceil.Rn, real_ceil.Rd, imag_ceil.Rn, imag_ceil.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -330,7 +330,7 @@ const zmath = {
         if (x instanceof Qi) {
             const real_floor = zmath.floor(new Q(x.Rn, x.Rd));
             const imag_floor = zmath.floor(new Q(x.In, x.Id));
-            return New(new Qi(real_floor.Rn, real_floor.Rd, imag_floor.Rn, imag_floor.Rd));
+            return Zahlen(new Qi(real_floor.Rn, real_floor.Rd, imag_floor.Rn, imag_floor.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -348,7 +348,7 @@ const zmath = {
         if (x instanceof Qi) {
             const real_round = zmath.round(new Q(x.Rn, x.Rd));
             const imag_round = zmath.round(new Q(x.In, x.Id));
-            return New(new Qi(real_round.Rn, real_round.Rd, imag_round.Rn, imag_round.Rd));
+            return Zahlen(new Qi(real_round.Rn, real_round.Rd, imag_round.Rn, imag_round.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -365,7 +365,7 @@ const zmath = {
         if (x instanceof Qi) {
             const real_trunc = zmath.trunc(new Q(x.Rn, x.Rd));
             const imag_trunc = zmath.trunc(new Q(x.In, x.Id));
-            return New(new Qi(real_trunc.Rn, real_trunc.Rd, imag_trunc.Rn, imag_trunc.Rd));
+            return Zahlen(new Qi(real_trunc.Rn, real_trunc.Rd, imag_trunc.Rn, imag_trunc.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -373,10 +373,10 @@ const zmath = {
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 絶対値を返す */
     abs: x => {
         /* ---- Q範囲 : RnとInをそれぞれabsに通して設定し直す ---- */
-        if (x instanceof Q) return New(new Q(Tools.abs(x.Rn), x.Rd));
+        if (x instanceof Q) return Zahlen(new Q(Tools.abs(x.Rn), x.Rd));
         /* ---- Qi範囲 : 実部と虚部で三平方の定理。hypotで計算できる ---- */
         if (x instanceof Qi) {
-            return New(zmath.hypot(new Q(x.Rn, x.Rd), new Q(x.In, x.Id)));
+            return Zahlen(zmath.hypot(new Q(x.Rn, x.Rd), new Q(x.In, x.Id)));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -384,7 +384,7 @@ const zmath = {
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 符号を返す */
     sign: x => {
         /* ---- Qi範囲 : RnとInをそれぞれsignに通して設定し直す ---- */
-        if (x instanceof Qi) return New(new Qi(Tools.sign(x.Rn), 1n, Tools.sign(x.In), 1n));
+        if (x instanceof Qi) return Zahlen(new Qi(Tools.sign(x.Rn), 1n, Tools.sign(x.In), 1n));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
@@ -393,7 +393,7 @@ const zmath = {
     add: (x, y) => {
         /* ---- Q範囲 : xRn/xRd + yRn/yRd = (xRn*yRd + yRn*xRd) / (xRd*yRd) ---- */
         if (x instanceof Q && y instanceof Q) {
-            return New(new Q(x.Rn * y.Rd + y.Rn * x.Rd, x.Rd * y.Rd));
+            return Zahlen(new Q(x.Rn * y.Rd + y.Rn * x.Rd, x.Rd * y.Rd));
         }
         /* ---- Qi範囲 : 実部と虚部をそれぞれQで表して定義通りやって戻す ---- */
         if (x instanceof Qi && y instanceof Qi) {
@@ -402,7 +402,7 @@ const zmath = {
             // (a+bi)+(c+di) = (a+c)+(b+d)i
             const ans_real = zmath.add(x_real, y_real);
             const ans_imag = zmath.add(x_imag, y_imag);
-            return New(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
+            return Zahlen(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -411,7 +411,7 @@ const zmath = {
     sub: (x, y) => {
         /* ---- Q範囲 : xRn/xRd - yRn/yRd = (xRn*yRd - yRn*xRd) / (xRd*yRd) ---- */
         if (x instanceof Q && y instanceof Q) {
-            return New(new Q(x.Rn * y.Rd - y.Rn * x.Rd, x.Rd * y.Rd));
+            return Zahlen(new Q(x.Rn * y.Rd - y.Rn * x.Rd, x.Rd * y.Rd));
         }
         /* ---- Qi範囲 : 実部と虚部をそれぞれQで表して定義通りやって戻す ---- */
         if (x instanceof Qi && y instanceof Qi) {
@@ -420,7 +420,7 @@ const zmath = {
             // (a+bi)-(c+di) = (a-c)+(b-d)i
             const ans_real = zmath.sub(x_real, y_real);
             const ans_imag = zmath.sub(x_imag, y_imag);
-            return New(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
+            return Zahlen(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -429,7 +429,7 @@ const zmath = {
     mul: (x, y) => {
         /* ---- Q範囲 : xRn/xRd * yRn/yRd = (xRn*yRn) / (xRd*yRd) ---- */
         if (x instanceof Q && y instanceof Q) {
-            return New(new Q(x.Rn * y.Rn, x.Rd * y.Rd));
+            return Zahlen(new Q(x.Rn * y.Rn, x.Rd * y.Rd));
         }
         /* ---- Qi範囲 : 実部と虚部をそれぞれQで表して定義通りやって戻す ---- */
         if (x instanceof Qi && y instanceof Qi) {
@@ -438,7 +438,7 @@ const zmath = {
             // (a+bi)*(c+di) = (ac-bd)+(ad+bc)i
             const ans_real = zmath.sub(zmath.mul(x_real, y_real), zmath.mul(x_imag, y_imag));
             const ans_imag = zmath.add(zmath.mul(x_real, y_imag), zmath.mul(x_imag, y_real));
-            return New(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
+            return Zahlen(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -447,7 +447,7 @@ const zmath = {
     div: (x, y) => {
         /* ---- Q範囲 : (xRn/xRd )/ (yRn/yRd) = (xRn*yRd) / (xRd*yRn) ---- */
         if (x instanceof Q && y instanceof Q) {
-            return New(new Q(x.Rn * y.Rd, x.Rd * y.Rn));
+            return Zahlen(new Q(x.Rn * y.Rd, x.Rd * y.Rn));
         }
         /* ---- Qi範囲 : 実部と虚部をそれぞれQで表して定義通りやって戻す ---- */
         if (x instanceof Qi && y instanceof Qi) {
@@ -457,7 +457,7 @@ const zmath = {
             const denominator = zmath.add(zmath.pow(y_real, new Z(2n)), zmath.pow(y_imag, new Z(2n)));
             const ans_real = zmath.div(zmath.add(zmath.mul(x_real, y_real), zmath.mul(x_imag, y_imag)), denominator);
             const ans_imag = zmath.div(zmath.sub(zmath.mul(x_imag, y_real), zmath.mul(x_real, y_imag)), denominator);
-            return New(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
+            return Zahlen(new Qi(ans_real.Rn, ans_real.Rd, ans_imag.Rn, ans_imag.Rd));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -478,7 +478,7 @@ const zmath = {
         }
         /* ---- Qi範囲 : x mod y = (y/(2πi))log(e^((2π/y)ix)) ---- */
         if (x instanceof Qi && y instanceof Qi) {
-            const two_pi = zmath.mul(New(2n), zmath.PI);
+            const two_pi = zmath.mul(Zahlen(2n), zmath.PI);
             const two_pi_i = zmath.mul(two_pi, zmath.I);
             const two_pi_div_y = zmath.div(two_pi, y);
             const log = zmath.log(zmath.exp(zmath.mul(two_pi_div_y, zmath.mul(zmath.I, x))));
@@ -490,10 +490,10 @@ const zmath = {
     /** ======== 比較演算 ======== **/
     /** @type {(x: Qi|Q|Z, y: Qi|Q|Z) => boolean} - 等価を返す */
     eq: (x, y) => {
-        /* ---- Qi範囲 : Newに通したうえで、各プロパティを比較して全て等価ならtrue ---- */
+        /* ---- Qi範囲 : Zahlenに通したうえで、各プロパティを比較して全て等価ならtrue ---- */
         if (x instanceof Qi && y instanceof Qi) {
-            const x_new = New(x);
-            const y_new = New(y);
+            const x_new = Zahlen(x);
+            const y_new = Zahlen(y);
             return x_new.Rn === y_new.Rn && x_new.Rd === y_new.Rd && x_new.In === y_new.In && x_new.Id === y_new.Id;
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -553,36 +553,36 @@ const zmath = {
     /** ======== 三角関数・逆三角関数 ======== **/
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 正弦を返す */
     sin: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.sinを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.sin(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.sinを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.sin(Number(x)));
         /* ---- Qi範囲 : sin z = (e^iz - e^(-iz)) / 2i ---- */
         if (x instanceof Qi) {
             const exp_iz = zmath.exp(zmath.mul(x, zmath.I));
             const exp_minus_iz = zmath.exp(zmath.mul(zmath.neg(x), zmath.I));
             const exp_diff = zmath.sub(exp_iz, exp_minus_iz);
-            return zmath.div(exp_diff, zmath.mul(zmath.I, New(2n)));
+            return zmath.div(exp_diff, zmath.mul(zmath.I, Zahlen(2n)));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 余弦を返す */
     cos: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.cosを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.cos(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.cosを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.cos(Number(x)));
         /* ---- Qi範囲 : cos z = (e^iz + e^(-iz)) / 2 ---- */
         if (x instanceof Qi) {
             const exp_iz = zmath.exp(zmath.mul(x, zmath.I));
             const exp_minus_iz = zmath.exp(zmath.mul(zmath.neg(x), zmath.I));
             const exp_sum = zmath.add(exp_iz, exp_minus_iz);
-            return zmath.div(exp_sum, New(2n));
+            return zmath.div(exp_sum, Zahlen(2n));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 正接を返す */
     tan: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.tanを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.tan(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.tanを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.tan(Number(x)));
         /* ---- Qi範囲 : tan z = sin z / cos z ---- */
         if (x instanceof Qi) return zmath.div(zmath.sin(x), zmath.cos(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -590,80 +590,80 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆正弦を返す */
     asin: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.asinを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.asin(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.asinを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.asin(Number(x)));
         /* ---- Qi範囲 : asin x = -i log( ix + sqrt( 1 - x^2 ) ) ---- */
         if (x instanceof Qi) {
             const ix = zmath.mul(zmath.I, x);
-            const sqrt = zmath.sqrt(zmath.sub(New(1n), zmath.pow(x, new Z(2n))));
-            return zmath.mul(zmath.mul(zmath.I, New(-1n)), zmath.log(zmath.add(ix, sqrt)));
+            const sqrt = zmath.sqrt(zmath.sub(Zahlen(1n), zmath.pow(x, new Z(2n))));
+            return zmath.mul(zmath.mul(zmath.I, Zahlen(-1n)), zmath.log(zmath.add(ix, sqrt)));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆余弦を返す */
     acos: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.acosを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.acos(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.acosを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.acos(Number(x)));
         /* ---- Qi範囲 : acos x = pi/2 - asin x ---- */
-        if (x instanceof Qi) return zmath.sub(zmath.div(zmath.PI, New(2n)), zmath.asin(x));
+        if (x instanceof Qi) return zmath.sub(zmath.div(zmath.PI, Zahlen(2n)), zmath.asin(x));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆正接を返す */
     atan: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.atanを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.atan(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.atanを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.atan(Number(x)));
         /* ---- Qi範囲 : atan x = i/2 * { log( 1-ix ) - log( 1+ix) } ---- */
         if (x instanceof Qi) {
             const ix = zmath.mul(zmath.I, x);
-            const log1 = zmath.log(zmath.sub(New(1n), ix));
-            const log2 = zmath.log(zmath.add(New(1n), ix));
-            return zmath.mul(zmath.div(zmath.I, New(2n)), zmath.sub(log1, log2));
+            const log1 = zmath.log(zmath.sub(Zahlen(1n), ix));
+            const log2 = zmath.log(zmath.add(Zahlen(1n), ix));
+            return zmath.mul(zmath.div(zmath.I, Zahlen(2n)), zmath.sub(log1, log2));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(y: Q|Z, x: Q|Z) => Q|Z} - 2つの引数の逆正接を返す */
     atan2: (y, x) => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.atan2を借りちゃえばOK ---- */
-        if (y instanceof Q && x instanceof Q) return New(Math.atan2(Number(y), Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.atan2を借りちゃえばOK ---- */
+        if (y instanceof Q && x instanceof Q) return Zahlen(Math.atan2(Number(y), Number(x)));
         /* ---- Q範囲外ならエラーを返す ---- */
         throw new TypeError("[Zahlen.js] zmath.atan2() can only accept Q( or Z) as arguments");
     },
     /** ======== 双曲線関数・逆双曲線関数 ======== **/
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 双曲線正弦を返す */
     sinh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.sinhを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.sinh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.sinhを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.sinh(Number(x)));
         /* ---- Qi範囲 : sinh z = (e^z - e^(-z)) / 2i ---- */
         if (x instanceof Qi) {
             const exp_z = zmath.exp(x);
             const exp_minus_z = zmath.exp(zmath.neg(x));
             const exp_diff = zmath.sub(exp_z, exp_minus_z);
-            return zmath.div(exp_diff, zmath.mul(zmath.I, New(2n)));
+            return zmath.div(exp_diff, zmath.mul(zmath.I, Zahlen(2n)));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 双曲線余弦を返す */
     cosh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.coshを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.cosh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.coshを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.cosh(Number(x)));
         /* ---- Qi範囲 : cosh z = (e^z + e^(-z)) / 2i ---- */
         if (x instanceof Qi) {
             const exp_z = zmath.exp(x);
             const exp_minus_z = zmath.exp(zmath.neg(x));
             const exp_sum = zmath.add(exp_z, exp_minus_z);
-            return zmath.div(exp_sum, zmath.mul(zmath.I, New(2n)));
+            return zmath.div(exp_sum, zmath.mul(zmath.I, Zahlen(2n)));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 双曲線正接を返す */
     tanh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.tanhを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.tanh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.tanhを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.tanh(Number(x)));
         /* ---- Qi範囲 : tanh z = sinh z / cosh z ---- */
         if (x instanceof Qi) {
             const sinh_z = zmath.sinh(x);
@@ -675,11 +675,11 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆双曲線正弦を返す */
     asinh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.asinhを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.asinh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.asinhを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.asinh(Number(x)));
         /* ---- Qi範囲 : asinh z =  log_e( z + sqrt( z^2 + 1 ) ) ---- */
         if (x instanceof Qi) {
-            const sqrt = zmath.sqrt(zmath.add(zmath.pow(x, new Z(2n)), New(1n)));
+            const sqrt = zmath.sqrt(zmath.add(zmath.pow(x, new Z(2n)), Zahlen(1n)));
             return zmath.log(zmath.add(x, sqrt));
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -687,12 +687,12 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆双曲線余弦を返す */
     acosh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.acoshを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.acosh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.acoshを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.acosh(Number(x)));
         /* ---- Qi範囲 : acosh z =  log_e( z + sqrt( z + 1 ) * sqrt( z - 1 ) ) ---- */
         if (x instanceof Qi) {
-            const sqrt1 = zmath.sqrt(zmath.add(x, New(1n)));
-            const sqrt2 = zmath.sqrt(zmath.sub(x, New(1n)));
+            const sqrt1 = zmath.sqrt(zmath.add(x, Zahlen(1n)));
+            const sqrt2 = zmath.sqrt(zmath.sub(x, Zahlen(1n)));
             const sqrt = zmath.mul(sqrt1, sqrt2);
             return zmath.log(zmath.add(x, sqrt));
         }
@@ -701,14 +701,14 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 逆双曲線正接を返す */
     atanh: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.atanhを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.atanh(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.atanhを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.atanh(Number(x)));
         /* ---- Qi範囲 : atanh z =  1/2 * log_e( (1+z)/(1-z) ) ---- */
         if (x instanceof Qi) {
-            const z_plus_1 = zmath.add(x, New(1n));
-            const z_minus_1 = zmath.sub(x, New(1n));
+            const z_plus_1 = zmath.add(x, Zahlen(1n));
+            const z_minus_1 = zmath.sub(x, Zahlen(1n));
             const log = zmath.log(zmath.div(z_plus_1, z_minus_1));
-            return zmath.mul(zmath.div(New(1n), New(2n)), log);
+            return zmath.mul(zmath.div(Zahlen(1n), Zahlen(2n)), log);
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
@@ -716,8 +716,8 @@ const zmath = {
     /** ======== 指数関数・対数関数 ======== **/
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 指数関数(e^x)を返す */
     exp: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.expを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.exp(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.expを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.exp(Number(x)));
         /* ---- Qi範囲 : e^(a+bi) = e^a * (cos b + i sin b) ---- */
         if (x instanceof Qi) {
             const exp_a = zmath.exp(x.real);
@@ -732,14 +732,14 @@ const zmath = {
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - exp(x) - 1を返す */
     expm1: x => {
         /* ---- Qi範囲 : zmath.exp()を借りて1引けばOK ---- */
-        if (x instanceof Qi) return zmath.sub(zmath.exp(x), New(1));
+        if (x instanceof Qi) return zmath.sub(zmath.exp(x), Zahlen(1));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 自然対数を返す */
     log: x => {
-        /* ---- Q⁺範囲 : Newがnumber→Qをやってくれるので、Math.logを借りちゃえばOK ---- */
-        if (x instanceof Q && x.gt(New(0))) return New(Math.log(Number(x)));
+        /* ---- Q⁺範囲 : Zahlenがnumber→Qをやってくれるので、Math.logを借りちゃえばOK ---- */
+        if (x instanceof Q && x.gt(Zahlen(0))) return Zahlen(Math.log(Number(x)));
         /* ---- Qi範囲 : Log z = log |z| + i (Arg z) ---- */
         if (x instanceof Qi) {
             const abs_z = zmath.abs(x);
@@ -751,21 +751,21 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - log(1 + x)を返す */
     log1p: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.log1p(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.log1pを借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.log1p(Number(x)));
         /* ---- Qi範囲 : zmath.log()を借りて1足せばOK ---- */
-        if (x instanceof Qi) return zmath.log(zmath.add(x, New(1)));
+        if (x instanceof Qi) return zmath.log(zmath.add(x, Zahlen(1)));
         /* ---- Qi範囲外ならエラーを返す ---- */
         throw new Error("[Zahlen.js] zmath Invalid Type Error");
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 10を底とする対数を返す */
     log10: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.log10を借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.log10(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.log10を借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.log10(Number(x)));
         /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
         if (x instanceof Qi) {
             const numerator = zmath.log(x);
-            const denominator = zmath.log(New(10));
+            const denominator = zmath.log(Zahlen(10));
             return zmath.div(numerator, denominator);
         };
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -773,12 +773,12 @@ const zmath = {
     },
     /** @type {(x: Qi|Q|Z) => Qi|Q|Z} - 2を底とする対数を返す */
     log2: x => {
-        /* ---- Q範囲 : Newがnumber→Qをやってくれるので、Math.log2を借りちゃえばOK ---- */
-        if (x instanceof Q) return New(Math.log2(Number(x)));
+        /* ---- Q範囲 : Zahlenがnumber→Qをやってくれるので、Math.log2を借りちゃえばOK ---- */
+        if (x instanceof Q) return Zahlen(Math.log2(Number(x)));
         /* ---- Q範囲 : たぶん底の変換公式でいいだろ ---- */
         if (x instanceof Qi) {
             const numerator = zmath.log(x);
-            const denominator = zmath.log(New(2));
+            const denominator = zmath.log(Zahlen(2));
             return zmath.div(numerator, denominator);
         }
         /* ---- Qi範囲外ならエラーを返す ---- */
@@ -791,13 +791,13 @@ const zmath = {
         if (
             zmath.eq(y, new Z(0n))
         ) {
-            return New(1);
+            return Zahlen(1);
         }
         /* ---- 2. x = 0 なら固定で 0 を返す ---- */
         if (
             zmath.eq(x, new Z(0n))
         ) {
-            return New(0);
+            return Zahlen(0);
         }
         /* ---- 3. x∈ℤ かつ y∈ℤ⁺ なら BigInt同士の直接演算にまかせてOK ---- */
         if (
@@ -805,7 +805,7 @@ const zmath = {
             && y instanceof Z
             && zmath.gt(y, new Z(0n))
         ) {
-            return New(BigInt(x.Rn) ** BigInt(y.Rn));
+            return Zahlen(BigInt(x.Rn) ** BigInt(y.Rn));
         }
         /* ---- 4. x∈ℤ かつ y∈ℤ⁻ なら 1 / (x ^ |y|) になる ---- */
         if (
@@ -819,7 +819,7 @@ const zmath = {
         if (
             x instanceof Q
             && y instanceof Z) {
-            return New(new Q(BigInt(x.Rn) ** BigInt(y.Rn), BigInt(x.Rd) ** BigInt(y.Rn)));
+            return Zahlen(new Q(BigInt(x.Rn) ** BigInt(y.Rn), BigInt(x.Rd) ** BigInt(y.Rn)));
         }
         /* ---- 6. x∈ℚ(i) かつ y∈ℤ⁺ なら しょうがないのでfor文で愚直にy回掛け算する ---- */
         if (
@@ -827,8 +827,8 @@ const zmath = {
             && y instanceof Z
             && zmath.gt(y, new Z(0n))
         ) {
-            let result = New(1);
-            for (let i = 0n; New(i).gt(y); i += 1n) {
+            let result = Zahlen(1);
+            for (let i = 0n; Zahlen(i).gt(y); i += 1n) {
                 result = zmath.mul(result, x);
             }
             return result;
@@ -928,4 +928,4 @@ const zmath = {
     },
 };
 
-export { zmath as math, New as new, Q, Qi, Z };
+export { zmath, Zahlen, Q, Qi, Z };
