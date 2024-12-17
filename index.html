@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AXT-AyaKoto/Zahlen.js</title>
-    <!-- 専用スクリプト読み込み -->
-    <script src="./script.js" type="module"></script>
     <!-- 共通スクリプト読み込み -->
     <script type="module" src="https://cdn.jsdelivr.net/gh/AXT-AyaKoto/load.md.js/module.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AXT-AyaKoto/article.css/main.css">
@@ -26,6 +24,11 @@
         <hr>
         <article data-load-md-js="./spec.md"></article>
     </main>
+    <script type="module">
+        import * as Zahlen from './script.js';
+        console.log(Zahlen);
+        debugger;
+    </script>
 </body>
 
 </html>
